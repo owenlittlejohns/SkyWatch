@@ -8,7 +8,7 @@
 import sys
 import ephem
 from numpy import pi, linspace, where, floor, sin, cos, tan, arctan, arcsin
-from numpy import amin, amax
+from numpy import amin, amax, median
 import matplotlib.pyplot as plt
 from matplotlib import font_manager
 
@@ -55,7 +55,8 @@ def visibility(ut_time, ra_in, dec_in, long_obs = 360.0 - 244.5365, \
     Calculate visibility track for a source at RA = ra_in and dec = dec_in
     (coordinates in decimal degrees) on the specified UT date.
 
-    Default coordinates and limits apply to 1.5m at San Pedro Martir coordinates: 244.5365E, 31.0442N, 2830m above sea level
+    Default coordinates and limits apply to 1.5m at San Pedro Martir
+    Coordinates: 244.5365E, 31.0442N, 2830m above sea level
     """
     obs = ephem.Observer()
     obs.lat = lat_obs * pi / 180.0
@@ -94,12 +95,11 @@ def visibility(ut_time, ra_in, dec_in, long_obs = 360.0 - 244.5365, \
         plt.minorticks_on()
         # Start the first figure
         plt.figure(0)
-        if amax(el_arr_degs) > 80.0:
-            ymax_plt = 90.0
-        else:
-            ymax_plt = amax(el_arr_degs) + 10.0
         # Minimum meaningful value is 0 degrees - the horizon
         ymin_plt = 0.0
+        # Maximum meaningful value is 90 degrees - zenith
+        ymax_plt = 90.0
+        # Set up the axis - folded on to a time
         plt.axis([amin(time_arr_hours % 24), amax(time_arr_hours % 24), \
                       ymin_plt, ymax_plt])
         plt.xlabel(r"Time (UT)")
@@ -111,14 +111,40 @@ def visibility(ut_time, ra_in, dec_in, long_obs = 360.0 - 244.5365, \
         else:
             pos_lab = "Position (J2000): {:.2f} +{:.2f}".format(ra_in, dec_in)
         h = el_arr_degs >= 30.0
-        if len(h) > 0:
+        if h.sum() > 0:
+            print len(h)
             folded_time = time_arr_hours[h] % 24.0
-            xfill_arr = [folded_time[0], folded_time[0], folded_time[-1], \
-                             folded_time[-1]]
+            folded_dt = folded_time[1:] - folded_time[:-1]
+            median_dt = median(folded_dt)
+            gap_inds = where(folded_dt > 1.5 * median_dt)
             yfill_arr = [ymin_plt, ymax_plt, ymax_plt, ymin_plt]
-            plt.fill_between(xfill_arr, yfill_arr, \
-                                 facecolor = "forestgreen", \
-                                 edgecolor = "forestgreen", alpha = 0.1)
+            if(len(gap_inds[0]) == 0):
+                print folded_time
+                print h
+                xfill_arr = [folded_time[0], folded_time[0], folded_time[-1], \
+                                 folded_time[-1]]
+                plt.fill_between(xfill_arr, yfill_arr, \
+                                     facecolor = "forestgreen", \
+                                     edgecolor = "forestgreen", alpha = 0.1)
+            else:
+                for gap_ind in range(len(gap_inds)):
+                    if gap_ind == 0:
+                        xfill_arr = [folded_time[0], folded_time[0], \
+                                         folded_time[gap_inds[0][gap_ind]], \
+                                         folded_time[gap_inds[0][gap_ind]]]
+                    elif gap_ind == len(folded_dt)-1:
+                        xfill_arr = [folded_time[gap_inds[0][gap_ind]], \
+                                         folded_time[gap_inds[0][gap_ind]], \
+                                         folded_time[-1], folded_time[-1]]
+                    else:
+                        xfill_arr = [folded_time[gap_inds[0][gap_ind]], \
+                                         folded_time[gap_inds[0][gap_ind]], \
+                                         folded_time[gap_inds[0][gap_ind + 1]],\
+                                         folded_time[gap_inds[0][gap_ind + 1]]]
+                    plt.fill_between(xfill_arr, yfill_arr, \
+                                         facecolor = "forestgreen", \
+                                         edgecolor = "forestgreen", alpha = 0.1)
+                        
         plt.grid(True)
         plt.plot(time_arr_hours % 24.0, el_arr_degs, label = pos_lab, \
                      color = "k")
