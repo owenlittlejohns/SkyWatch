@@ -8,7 +8,7 @@
 import sys
 import ephem
 from numpy import pi, linspace, where, floor, sin, cos, tan, arctan, arcsin
-from numpy import amin, amax, median
+from numpy import amin, amax, median, argsort
 import matplotlib.pyplot as plt
 from matplotlib import font_manager
 
@@ -48,9 +48,12 @@ def days_to_gst(days_in):
     """
     return (280.46061837 + (360.98564736629 * days_in)) % 360.0
 
-def visibility(ut_time, ra_in, dec_in, long_obs = 360.0 - 244.5365, \
-                   lat_obs = 31.0442, elev_obs = 2830., \
-                   dec_lower_limit = -27.5, dec_upper_limit = 57):
+#def visibility(ut_time, ra_in, dec_in, long_obs = 360.0 - 244.5365, \
+#                   lat_obs = 31.0442, elev_obs = 2830., \
+#                   dec_lower_limit = -27.5, dec_upper_limit = 57):
+def visibility(ut_time, ra_in, dec_in, long_obs = 360.0 - 100.0, \
+                   lat_obs = -65.0, elev_obs = 0., \
+                   dec_lower_limit = -90, dec_upper_limit = 90):
     """
     Calculate visibility track for a source at RA = ra_in and dec = dec_in
     (coordinates in decimal degrees) on the specified UT date.
@@ -104,6 +107,10 @@ def visibility(ut_time, ra_in, dec_in, long_obs = 360.0 - 244.5365, \
                       ymin_plt, ymax_plt])
         plt.xlabel(r"Time (UT)")
         plt.ylabel(r"Elevation (degrees)")
+        # Sort time
+        full_sort_inds = argsort(time_arr_hours % 24.0)
+        full_sort_time = time_arr_hours[])
+        full_sort_el_degs =
         # Plot visibility track
         ra_in, dec_in
         if (dec_in < 0):
@@ -114,15 +121,16 @@ def visibility(ut_time, ra_in, dec_in, long_obs = 360.0 - 244.5365, \
         if h.sum() > 0:
             print len(h)
             folded_time = time_arr_hours[h] % 24.0
-            folded_dt = folded_time[1:] - folded_time[:-1]
-            median_dt = median(folded_dt)
-            gap_inds = where(folded_dt > 1.5 * median_dt)
+            sorted_inds = argsort(folded_time)
+            sorted_time = folded_time[sorted_inds]
+            sorted_el_arr_degs = el_arr_degs[sorted_inds]
+            sorted_dt = sorted_time[1:] - sorted_time[:-1]
+            median_dt = median(sorted_dt)
+            gap_inds = where(sorted_dt > 1.5 * median_dt)
             yfill_arr = [ymin_plt, ymax_plt, ymax_plt, ymin_plt]
             if(len(gap_inds[0]) == 0):
-                print folded_time
-                print h
-                xfill_arr = [folded_time[0], folded_time[0], folded_time[-1], \
-                                 folded_time[-1]]
+                xfill_arr = [sorted_time[0], sorted_time[0], sorted_time[-1], \
+                                 sorted_time[-1]]
                 plt.fill_between(xfill_arr, yfill_arr, \
                                      facecolor = "forestgreen", \
                                      edgecolor = "forestgreen", alpha = 0.1)
@@ -146,7 +154,7 @@ def visibility(ut_time, ra_in, dec_in, long_obs = 360.0 - 244.5365, \
                                          edgecolor = "forestgreen", alpha = 0.1)
                         
         plt.grid(True)
-        plt.plot(time_arr_hours % 24.0, el_arr_degs, label = pos_lab, \
+        plt.plot(sorted_time, el_arr_degs, label = pos_lab, \
                      color = "k")
         plt.legend(loc = "upper left", fontsize = 10)
         plt.savefig("observability_fig.pdf", transparent = True)
