@@ -26,5 +26,5 @@ bob = np.array([0, 1, 2, 3])
 """
 I like Python and Numpy
 """
-return bob
+print bob
 ```
