@@ -1,7 +1,23 @@
 # SkyWatch
 
-This is a quick repository showing some of the code I've been working on to provide tools to SkyWatch.
+This is a quick repository containing some tools for visibility plots and coordinate transformations.
 
+#
+# conv_ra_dec.py
+
+A collection of four Python routines to convert input right ascension and declination to or from decimal degrees (from or to sexagesimal). Outputs are all floating point variables.
+
+Calling examples:
+
+```python
+import conv_ra_dec
+RA_hours, RA_mins, RA_secs = RA_degs_to_sexa(RA_degs_in)
+RA_degs = RA_sexa_to_degs(RA_hours, RA_mins, RA_secs)
+Dec_idegs, Dec_mins, Dec_secs = Dec_degs_to_sexa(dec_degs)
+Dec_degs = Dec_sexa_to_degs(Dec_degs_in, Dec_mins, Dec_secs)
+```
+
+# 
 # owen_vis.py:
 
 A code to calculate the visibility of a patch of sky to a given location on the Earth. Currently, it produce:
@@ -16,15 +32,5 @@ Improvements planned:
 * Calculation of the Moon track.
 * Calculation of the distance of the source from the Moon.
 
-# Also for future reference:
 
-To show some Python code, rendered correctly:
-
-```python
-import numpy as np
-bob = np.array([0, 1, 2, 3])
-"""
-I like Python and Numpy
-"""
-print bob
 ```
