@@ -11,10 +11,10 @@ Calling examples:
 
 ```python
 import conv_ra_dec
-RA_hours, RA_mins, RA_secs = RA_degs_to_sexa(RA_degs_in)
-RA_degs = RA_sexa_to_degs(RA_hours, RA_mins, RA_secs)
-Dec_idegs, Dec_mins, Dec_secs = Dec_degs_to_sexa(dec_degs)
-Dec_degs = Dec_sexa_to_degs(Dec_degs_in, Dec_mins, Dec_secs)
+RA_hours, RA_mins, RA_secs = conv_ra_dec.RA_degs_to_sexa(RA_degs_in)
+RA_degs = conv_ra_dec.RA_sexa_to_degs(RA_hours, RA_mins, RA_secs)
+Dec_idegs, Dec_mins, Dec_secs = conv_ra_dec.Dec_degs_to_sexa(dec_degs)
+Dec_degs = conv_ra_dec.Dec_sexa_to_degs(Dec_degs_in, Dec_mins, Dec_secs)
 ```
 
 # 
