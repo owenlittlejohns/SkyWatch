@@ -66,6 +66,7 @@ def visibility(ut_time, ra_in, dec_in, long_obs = 360.0 - 100.0, \
     obs.long = (360.0 - long_obs) * pi / 180.0
     obs.elevation = elev_obs
     sn = ephem.Sun()
+    mn = ephem.Moon()
     ts0 = ephem.now()
     ts1 = obs . next_setting(sn) - ts0
     ts2 = obs . next_rising(sn) - ts0
@@ -76,6 +77,9 @@ def visibility(ut_time, ra_in, dec_in, long_obs = 360.0 - 100.0, \
                             / 60.0) / 60.
 
     time_arr_hours = hour0 + linspace(ts1 * 24.0, ts2 * 24.0, 500)
+    # For each element in the time array, compute the Moon position
+    # Need to change obs.date to string of format "YYYY/M/DD HH:MM:SS"
+    mn.Moon(obs)
     # Return when the source is next visibile
     if (dec_in < dec_upper_limit and dec_in > dec_lower_limit):
         days = days_since_j2000(year_in, month_in, day_in) + \
