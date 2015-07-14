@@ -31,6 +31,7 @@ Improvements planned:
 * Coping with the potential for more than one period of observability (an unlikely event, but may occur near the poles).
 * Calculation of the Moon track.
 * Calculation of the distance of the source from the Moon.
+* Calculation of astronomical twilight - from when the Sun reaches -18 degrees.
 
 
 ```
