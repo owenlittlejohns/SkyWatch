@@ -17,6 +17,11 @@ Dec_idegs, Dec_mins, Dec_secs = conv_ra_dec.Dec_degs_to_sexa(dec_degs)
 Dec_degs = conv_ra_dec.Dec_sexa_to_degs(Dec_degs_in, Dec_mins, Dec_secs)
 ```
 
+Improvements planned:
+
+* Add conversion from decimal to a sexagesimal string.
+* Add conversion from sexagesimal strin to decimal.
+
 # 
 # owen_vis.py:
 
@@ -32,6 +37,9 @@ Improvements planned:
 * Calculation of the Moon track.
 * Calculation of the distance of the source from the Moon.
 * Calculation of astronomical twilight - from when the Sun reaches -18 degrees.
+* Moon illumination - play with Phase part of ephem class.
 
-
+```python
+moon_ephem = ephem.Moon()
+moon_ephem.Phase()
 ```
