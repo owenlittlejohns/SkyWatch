@@ -23,23 +23,24 @@ Improvements planned:
 * Add conversion from sexagesimal strin to decimal.
 
 # 
-# owen_vis.py:
+# visibility.py:
 
-A code to calculate the visibility of a patch of sky to a given location on the Earth. Currently, it produce:
+A code to calculate the visibility of a patch of sky to a given location on the Earth. Currently, it produces:
 
 * A figure, which plots the height above the horizon as a function of time
-* A string output stating whether the source is visible, and if so when it is next visible in hours.
+* Also on the figure are tracks for the Moon and the Sun altitude
+* A string output stating whether the source is visible, and if so when it is next visible and for how long.
+
+Currently an internal Pandas table contains:
+
+* Source right ascension, declination and altitude.
+* Moon and Sun right ascension and declination.
+* Moon illumination percentage.
+* Distance between the source and the Moon.
+* Moon and Sun altitude (elevation angle from the horizon).
+* Whether it is day, night or astronomical twilight.
 
 Improvements planned:
 
 * Fill the background of the plot with green for the time period when the source is 30 degrees or more above the horizon.
-* Coping with the potential for more than one period of observability (an unlikely event, but may occur near the poles).
-* Calculation of the Moon track.
-* Calculation of the distance of the source from the Moon.
-* Calculation of astronomical twilight - from when the Sun reaches -18 degrees.
-* Moon illumination - play with Phase part of ephem class.
 
-```python
-moon_ephem = ephem.Moon()
-moon_ephem.Phase()
-```
