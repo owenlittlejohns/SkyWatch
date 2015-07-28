@@ -43,4 +43,6 @@ Currently an internal Pandas table contains:
 Improvements planned:
 
 * Fill the background of the plot with green for the time period when the source is 30 degrees or more above the horizon.
+* Object coordinates and observatory coordinates on the panel.
+* Twilight lines.
 
