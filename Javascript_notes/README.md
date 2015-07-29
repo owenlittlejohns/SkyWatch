@@ -5,5 +5,7 @@
 
 Notes on the Code School initial Javascript tutorials. This so far includes:
 
-* Booleans, operators and arithmetic
-* Strings
+* Booleans, operators and arithmetic.
+* Strings, declaration, concatenation, length and indices.
+* Variables: declaration, changing, operators, incrementing
+* Files: calling from HTML, syntax, printing to JavaScript console.

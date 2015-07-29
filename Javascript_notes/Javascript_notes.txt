@@ -66,3 +66,144 @@ Javascript is case sensitive.
 ``` > "Thisisalongstring".length``` returns 17
 
 .length property will also include spaces and punctuation.
+
+# Variables
+
+Store and manage data
+
+Assignment syntax:
+``` > var variable1 = 3``` (var is the command to say this is going to be a variable)
+``` > variable1``` returns 3
+
+Rules for naming:
+
+No spaces.
+Can't start the name with a digit.
+Can use underscores, but instead, use "camelcase", ie first letter is lowercase,
+but the variable is several words, with capitals starting each word, i.e.:
+``` > var thisIsAVariable```
+
+Changing variable contents:
+
+``` > var var1 = 3 (initiate variable)
+ > var1 = 9``` (change it)
+or
+``` > var1 = var1 + 3``` (like += in Python)
+``` > var += 3``` (hooray, it has += like Python)
+Other similar operators:
+
++=, -=, *=, /=
+
+Variable names can substitute for the data they contain:
+
+``` > var var1 = 3
+ > "This is a string with " + var1 + " things"``` returns "This is a string with 3 things"
+or expressions:
+``` > "Blah " + (var1 / 3) + "!"``` returns "Blah 1!"
+
+New variable:
+``` > var var2 = var1 * 3```
+
+To increment or decrement (add 1 or minus 1 from the value):
+
+variableName++ or variableName--
+
+``` > var var1 = 3
+ > var1++
+ > var1``` returns 4
+``` > var var2 = 5
+ > var2--
+ > var2``` returns 4
+
+# More on variables:
+
+Can store strings as variables.
+
+``` > var str1 = "Stringy "
+ > var str2 = "McStringerson"
+ > str1 + "\n" str2``` returns:
+"Stringy "
+"McStringerson"
+
+If the variable is a string, you can get it's length:
+
+``` > var var1 = "blahblahblah"
+ > var1.length``` returns 12
+
+Comparing string lengths:
+
+``` > var var1 = "blah"
+ > var var2 = "blah!"
+ > var1.length > var2.length"``` returns false
+
+Can find substrings within string:
+
+``` > var longStr = "ThisIsALongStr!"
+ > longStr.charAt(11)``` returns the character at index 11, "S" 
+(indices start at 0)
+
+# Files
+
+Javascript source files to run in HTML source code.
+We want to print messages in user browser, not out console.
+
+A Javascript file is for printing our mesages in their browser. It is called from HTML code.
+
+Common HTML code:
+
+```<html>
+<head>
+<script src="trains.js"></script>
+</head>
+<body>
+<h1>JAVASCRIPT EXPRESS!</h1>
+...
+</body>
+</html>```
+
+The ```<script>``` tells the HTML where the Javascript we want to run is.
+The ```src``` signals the HTML the filename.
+Also need to finish off with a ```</script>``` tag - typical HTML.
+
+Where do the files go:
+
+root folder for whole website (called root/)
+Inside this:
+
+index.html and trains.js (index.html is the main html, trains.js is in there)
+
+Better would be:
+
+root, and inside there index.html and a folder called scripts, where .js scripts are found.
+so the ```<scripts>``` tag now reads:
+
+```<script src="scripts/trains.js></scripts>```
+
+The location is relative to the directory where the HTML file is saved.
+
+If the files are really far apart:
+
+ie:
+
+root has pages and scripts subdirectories.
+index.html is in pages and trains.js is in scripts.
+
+New tag:
+
+```<script src="../scripts/trains.js></scripts>```
+
+# Putting things inside the Javascript file:
+
+Inside a file, with multiple console statements, finish each line with a semicolon.
+But the results from the script need to be output - i.e. printing.
+
+```console.log()``` outputs results of code operations.
+
+```console.log("This is an output string!");```
+
+console.log() can also return booleans or variables.
+
+But console.log() only prints to the Javascript console.
+This can be seen by clicking on Tools/Javascript Console
+Also, on the right hand side of the log, it gives the file and line number responsible for causing the output.
+
