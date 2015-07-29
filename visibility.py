@@ -53,11 +53,13 @@ def h_to_el(h_in, dec_in, phi0_in):
 
     sin(a) = sin(phi0)sin(dec) + cos(phi0)cos(dec)cos(h)
     """
-    d2r = pi / 180.0
-    term_1 = sin(phi0_in * d2r) * sin(dec_in * d2r)
-    term_2 = cos(phi0_in * d2r) * cos(dec_in * d2r) * cos(h_in * d2r)
+    phi0_rads = radians(phi0_in)
+    dec_rads = radians(dec_in)
+    h_rads = radians(h_in)
+    term_1 = sin(phi0_rads) * sin(dec_rads)
+    term_2 = cos(phi0_rads) * cos(dec_rads) * cos(h_rads)
     sin_a = term_1 + term_2
-    return arcsin(sin_a) / d2r
+    return degrees(arcsin(sin_a))
 
 def days_since_j2000(year_in, month_in, day_in):
     """
@@ -121,6 +123,7 @@ def visibility(ut_time, ra_in, dec_in, long_obs = 360.0 - 244.5365, \
     obj_df.loc[:, "obj_ra"] = ra_in
     obj_df.loc[:, "obj_dec"] = dec_in
     # Loop through for all times on the grid
+    pre_loop_time = datetime.now()
     for ind in range(len(time_arr_full)):
         obj_df.loc[ind, "date_str"] = "%s" % \
             ephem.Date(obj_df.loc[ind, "date_dec"])
@@ -133,17 +136,26 @@ def visibility(ut_time, ra_in, dec_in, long_obs = 360.0 - 244.5365, \
         obj_df.loc[ind, "moon_phase"] = mn.phase
         obj_df.loc[ind, "sun_ra"] = sn.a_ra * 180.0 / pi
         obj_df.loc[ind, "sun_dec"] = sn.a_dec * 180.0 / pi
-        sn.compute(obs)
-        mn.compute(obs)
-        # Output altitude angles in radians
-        obj_df.loc[ind, "moon_alt"] = mn.alt * 180.0 / pi
-        obj_df.loc[ind, "sun_alt"] = sn.alt * 180.0 / pi
+
+    post_loop_time = datetime.now()
+    loop_time = post_loop_time - pre_loop_time
     # Calculate Moon distance
     obj_df["moon_dist"] = ang_sep(obj_df["moon_ra"], obj_df["obj_ra"], \
                                       obj_df["moon_dec"], obj_df["obj_dec"])
     # Calculate the elevation angle of the object
+    pre_non_loop = datetime.now()
     gst_arr = days_to_gst(obj_df["date_dec"])
+    obj_df["moon_alt"] = h_to_el(gst_arr - long_obs - \
+                                     obj_df["moon_ra"].astype(float), \
+                                     obj_df["moon_dec"].astype(float), lat_obs)
+    obj_df["sun_alt"] = h_to_el(gst_arr - long_obs - \
+                                    obj_df["sun_ra"].astype(float), \
+                                    obj_df["sun_dec"].astype(float), lat_obs)
     obj_df["obj_alt"] = h_to_el(gst_arr - long_obs - ra_in, dec_in, lat_obs)
+    post_non_loop = datetime.now()
+    non_loop_time = post_non_loop - pre_non_loop
+    print "Loop time: ", loop_time
+    print "Non loop time: ", non_loop_time
     # Calculate the airmass of the object (Pickering, 2002)
     obj_df["obj_airmass"] = airmass_calc(obj_df["obj_alt"])
     # Plot out Moon, Sun and object tracks
@@ -196,8 +208,9 @@ def visibility(ut_time, ra_in, dec_in, long_obs = 360.0 - 244.5365, \
             t_obs = (obj_df.loc[vis_inds[0][-1], "date_dec"].astype(float) - \
                             obj_df.loc[0, "date_dec"].astype(float)) * 24.0
         else:
-            t_obs = (obj_df.loc[vis_inds[gap_ind[0]], "date_dec"].astype(float)-\
-                            obj_df.loc[0, "date_dec"].astype(float)) * 24.0
+            t_obs = (obj_df.loc[vis_inds[gap_ind[0]], \
+                                    "date_dec"].astype(float) - \
+                         obj_df.loc[0, "date_dec"].astype(float)) * 24.0
         time_obs_hour = int(floor(t_obs))
         time_obs_mins = int((t_obs % 1.0) * 60.0)
         # Make components of the observing duration string
