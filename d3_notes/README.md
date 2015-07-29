@@ -14,3 +14,11 @@ Structure:
 * Define data in a variable
 * Define the range of the x-axis and the physical size of the plot: ```d3.scale.linear()```
 * Choose type of D3 class (chart), and add the data to the plot.
+
+#
+# Javascript_notes.txt
+
+Notes on the Code School initial Javascript tutorials. This so far includes:
+
+* Booleans, operators and arithmetic
+* Strings

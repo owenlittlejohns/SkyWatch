@@ -1,0 +1,68 @@
+Notes of Codeschool Javascript intro
+
+# Booleans, The True Path
+
+Javascript primarily for interactive webpages.
+
+Fundamental building blocks, create and store data inside variables, operate upon them and then how to find and run Javascript source files within HTML source code.
+
+Numbers operators and strings:
+
+``` > 24``` gives 24 back out (and works with decimal numbers)
+
+Javascript has five most common operators:
+
+Addition: 1 + 2
+Subtraction: 3 - 4
+Multiplication: 5 * 6
+Division: 7 / 8
+Modulus: 9 % 10
+
+Javascipt also recognises BODMAS (also known as PEDMAS)
+Negative numbers also coped with, i.e.: "-5"
+Modulus is done at the same sort of time as multiplication.
+
+Comparasion operators (comparators):
+
+These return ```true``` or ```false```
+i.e.: ``` > 6 > 4``` returns "true" because 6 is greater than 4
+Greater than: >
+Less than: <
+Equality: ==
+Non-equal: !=
+Greater than or equal to: >=
+Less than or equal to: <=
+
+# Strings:
+
+Need quotation marks around text, i.e.: ```"This is a string"```
+Can concatenate strings:
+``` > "string1 " + "string2"``` returns "string1 string2"
+
+Can also concatenate strings with numbers:
+``` > "string1 " + 4``` returns "string1 4"
+
+Expressions can also be concatenated, but will be evaluated:
+``` > "string1 " + 3/4``` returns "string1 0.75"
+
+Some characters need backslashes:
+``` > "String:\tstring2"``` returns "String:	string2"
+\t means advance to the next tab stop.
+``` > \"Quote\"``` returns "Quote" (but actually with the quotation marks)
+\" means I actually want the quotation marks in the string
+``` > Owen\\Littlejohns``` returns "Owen\Littlejohns"
+\\ means I want a backslash in my string.
+\n means new line.
+(non exhaustive list, but a good start)
+
+Check for matching strings, or alphabetical ordering:
+
+``` > "String1" == "String1"``` returns true
+``` > "String1" != "String!"``` returns false
+
+Javascript is case sensitive.
+
+.length property.
+``` > "Thisisalongstring".length``` returns 17
+
+.length property will also include spaces and punctuation.
