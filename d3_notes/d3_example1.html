@@ -19,6 +19,7 @@
 <!-- Define some data in a variable -->
 var data = [4, 8, 15, 16, 23, 42];
 
+<!-- Work out the domain (data range) and the range (physical size) and scaling between the two -->
 var x = d3.scale.linear()
     .domain([0, d3.max(data)])
     .range([0, 420]);
