@@ -1,0 +1,90 @@
+# HTML and CSS notes:
+
+HyperText Markup Language.
+Files always have extension .html.
+Browser is basically an HTML reader.
+
+HTML uses tags. They open <tag> and close </tag>
+
+So a big title:
+
+```<h1>This is a tag</h1>```
+
+Heading tags are for headings of sections, 1 is the biggest and most important, so <h1> is usually page name, <h2> the main subject and <h3> ... <h6> are used for other things like section names.
+
+Text goes inside a paragraph tag ```<p>Text in here.</p>```
+
+An unordered list tag:
+
+```<ul>
+  <li> item 1</li>
+  <li> item 2</li>
+  <li> item 3</li>
+</ul>```
+
+Nesting of tags. In this instance ```<ul>``` is the parent tag and ```<li>``` is the child tag.
+
+Make sure you indent code. 2 spaces indentation.
+
+Ordered list (will automatically number the entries of the list):
+
+```<ol>
+  <li> Instruction 1</li>
+  <li> Instruction 2</li>
+  <li> Instruction 3</li>
+</ol>```
+
+The body tag:
+
+All visible content goes inside ```<body></body>``` tags.
+Any code that runs first before the page loads goes inside ```<head></head>``` tags.
+The <head> and <body> tags also go inside <html> tags
+
+At the very top you have the doc type, i.e. which version of HTML to use.
+```<!DOCTYPE html>``` just makes the page use the latest version.
+
+#
+# Adding links to pages
+
+URL:
+
+protocol: https or http
+server: blah.com
+file: dotdotdot.html
+
+You send a request to the server for the file. You get sent it, and then display it in the browser.
+
+Links are a request for a new file, which will be returned and displayed.
+
+The link uses an <a> which is short for "anchor"
+
+```<a>link on page</a>```
+
+would produce the link to click on the page, but hasn't got a name of a file to request.
+To do that you need to use an "HTML attribute".
+
+Attributes go inside the opening tag, and in this example it is the ```href``` attribute (URL most go in quotes):
+
+```<a href="http://example.com/blah.html">link on page</a>```
+
+Attributes allow you to add additional information to the tags.
+
+There is also a target attribute:
+```<a href="http://example.com/blah.html" target="_blank" >link on page</a>```
+
+Choosing ```_blank``` means that the page will open in a new blank window.
+If ```_self``` it means replace the current page with the new one. (Default)
+
+Example ```href``` values above are absolute, stating the server etc.
+
+If you want to query the same server, you can just use a relative path:
+
+```<a href="blah.html" target="_blank" >link on page</a>```
+
+With no protocol or server name specified, the browser assumes you want the same server and protocol you used before.
+
+You should probably use relative links whenever dealing with the same server.
+
+Creating a link to another website:
+
+Use an absolute link.
