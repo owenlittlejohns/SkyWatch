@@ -203,7 +203,7 @@ def visibility(ut_time, ra_in, dec_in, long_obs = 360.0 - 244.5365, \
             t_obs = (obj_df.loc[vis_inds[0][-1], "date_dec"].astype(float) - \
                             obj_df.loc[0, "date_dec"].astype(float)) * 24.0
         else:
-            t_obs = (obj_df.loc[vis_inds[gap_ind[0]], \
+            t_obs = (obj_df.loc[vis_inds[0][gap_ind[0]], \
                                     "date_dec"].astype(float) - \
                          obj_df.loc[0, "date_dec"].astype(float)) * 24.0
         time_obs_hour = int(np.floor(t_obs))
@@ -216,9 +216,9 @@ def visibility(ut_time, ra_in, dec_in, long_obs = 360.0 - 244.5365, \
         else:
             ob_hr_str = ""
         if time_obs_mins >= 2.0:
-            ob_min_str = " " + str(time_obs_min) + " minutes."
+            ob_min_str = " " + str(time_obs_mins) + " minutes."
         elif time_obs_mins >= 1.0:
-            ob_min_str = " " + str(time_obs_min) + " minute."
+            ob_min_str = " " + str(time_obs_mins) + " minute."
         else:
             ob_min_str = "."
         return "This object is immediately visible for a period of" + \
@@ -234,7 +234,7 @@ def visibility(ut_time, ra_in, dec_in, long_obs = 360.0 - 244.5365, \
             t_obs = (obj_df.loc[vis_inds[0][-1], "date_dec"] - \
                             obj_df.loc[vis_inds[0][0], "date_dec"]) * 24.0
         else:
-            t_obs = (obj_df.loc[vis_inds[gap_ind[0]], "date_dec"] - \
+            t_obs = (obj_df.loc[vis_inds[0][gap_ind[0]], "date_dec"] - \
                             obj_df.loc[vis_inds[0][0], "date_dec"]) * 24.0
         obs_hours = int(np.floor(t_obs))
         obs_mins = int((t_obs % 1.0) * 60.0)
@@ -288,4 +288,4 @@ if __name__ == '__main__':
 
     utn=datetime.utcnow()
 
-    print (visibility(utn, ra_in, dec_in))
+    print (visibility(utn, ra_in, dec_in, long_obs = 360.0 - 342.1184, lat_obs = 28.7606))
