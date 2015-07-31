@@ -1,0 +1,240 @@
+# Notes on the second Code School JavaScript course:
+
+#
+# While-loops
+
+Basic while-loop, continues to run while boolean expression is true.
+
+Simple example:
+
+``` while(*some expression is true*){
+    
+        *do this code!*
+
+}```
+
+An infinite loop would have the expression: `while(true){}`
+
+So to print numbers 1 to 5 in ascending order:
+
+```
+var number = 1;
+while (number <= 5){
+
+      console.log(number)
+      number++;
+}
+```
+
+or another example:
+
+```
+var trainNumber = 1;
+while (trainNumber <= 8){
+      console.log("Train #" +trainNumber + " is running.");
+      trainNumber++;
+}
+```
+
+In practice, though, change "8" to a variable that can be changed.
+
+#
+# The For-Loop:
+
+Example:
+
+```
+for (*start counter here*; *condition to loop if true*; *do this after iteration*{
+
+* code to run*
+
+}
+```
+
+So train example:
+
+```
+for (var trainNumber = 1; trainNumber <= trainsOperational; trainNumber++){
+    console.log("Train #" + trainNumber + " is running.");
+}
+
+```
+
+Or printing something in descending order:
+
+```
+for(var number = 5; number > 0; number--){
+	console.log(number)
+}
+```
+
+List the non-operational trains (9 -12):
+
+```
+var trainsOperational = 8;
+var totalTrains = 12;
+for(var stoppedTrain = trainsOperational + 1; stoppedTrain <= totalTrains; stoppedTrain++){
+	console.log("Train #" + stoppedTrain + " is not running.");
+}
+```
+
+For reality - use while loop to go through all running, then for loop for rest from 1 more than the end of the running loop.
+
+#
+# If, Else statements:
+
+Example to combine train loops:
+
+```
+for (var trainNumber = 1; trainNumber <= totalTrains; trainNumber++){
+    if(*condition is true*){
+    	*do this*
+    } else {
+      	*Otherwise do this*
+    }
+}
+```
+
+So:
+
+```
+operationalTrains = 8;
+for (var trainNumber = 1; trainNumber <= totalTrains; trainNumber++){
+    if(trainNumber <= operationalTrains){
+    	console.log("Train #" + trainNumber + " is running.");
+    } else {
+      	console.log("Train #" + trainNumber + " is not running.");
+    }
+}
+```
+
+#
+# If-Else - If statement
+
+```
+if(condition1){
+  *do code1*
+} else if (condition2){
+  *do code2*
+} else {
+  *All other cases: do code3*
+}
+
+```
+ For a train with a special case (train 10 is the express train):
+
+```
+operationalTrains = 8;
+for (var trainNumber = 1; trainNumber <= totalTrains; trainNumber++){
+    if(trainNumber <= operationalTrains){
+    	console.log("Train #" + trainNumber + " is running.");
+    } else if (trainNumber == 10){
+        console.log("Train #10 begins running at noon.");
+    } else {
+      	console.log("Train #" + trainNumber + " is not running.");
+    }
+}
+```
+
+Nested conditions:
+
+Pay attention to indentations.
+
+i.e. Big red squares, small blue squares, purple circles:
+
+```
+if (shape == square){
+   if (size == big){
+      "make it red";
+   } else {
+      "make it blue";
+   }
+} else {
+  "it must be a circle, so make it purple";
+}
+```
+
+Extra statements - if all trains are running just print single message - or if none, again a single statement.
+
+```
+...
+if (trainsOperational > 0){
+   if (trainsOperations == totalTrains){
+      console.log("All trains are running today!");
+   } else {
+     for (var trainNumber = 1; trainNumber <= totalTrains; trainNumber++){
+     	 if (trainNumber <= trainsOperations){
+     	    console.log("Train #" + trainNumber + " is running today!");
+     	 } else if(trainNumber == 10){
+            console.log("Train #10 is an express train at noon!");
+     	 } else {
+           console.log("Train #" + trainNumber + " is not running today!");
+     	 }
+      }
+   }
+} else {
+  console.log("There are no trains running today!");
+}
+
+```
+
+#
+# Complex conditionals:
+
+&& - AND
+|| - OR
+
+Examples:
+
+```
+> (11 >= 11) && (-7 < 6)
+```
+
+So if we wanted a second express train (10 and 12)
+
+```
+...
+if (trainsOperational > 0){
+   if (trainsOperations == totalTrains){
+      console.log("All trains are running today!");
+   } else {
+     for (var trainNumber = 1; trainNumber <= totalTrains; trainNumber++){
+     	 if (trainNumber <= trainsOperations){
+     	    console.log("Train #" + trainNumber + " is running today!");
+     	 } else if(trainNumber == 10 || trainNumber == 12){
+            console.log("Train #" + trainNumber + " is an express train at noon!");
+     	 } else {
+           console.log("Train #" + trainNumber + " is not running today!");
+     	 }
+      }
+   }
+} else {
+  console.log("There are no trains running today!");
+}
+```
+
+What if train 3 only runs on Sunday:
+
+```
+...
+var dayOfWeek = "Friday"
+if (trainsOperational > 0){
+   if (trainsOperations == totalTrains && dayOfWeek == "Sunday"){
+      console.log("All trains are running today!");
+   } else {
+     for (var trainNumber = 1; trainNumber <= totalTrains; trainNumber++){
+     	 if (trainNumber <= trainsOperations && trainNumber != 3){
+     	    console.log("Train #" + trainNumber + " is running today!");
+     	 } else if(trainNumber == 10 || trainNumber == 12){
+            console.log("Train #" + trainNumber + " is an express train at noon!");
+	 } else if(trainNumber == 3 && dayOfWeek == "Sunday"){
+	    console.log("Train #" + trainNumber + " is running today!");
+     	 } else {
+           console.log("Train #" + trainNumber + " is not running today!");
+     	 }
+      }
+   }
+} else {
+  console.log("There are no trains running today!");
+}
+```

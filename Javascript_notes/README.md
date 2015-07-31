@@ -1,7 +1,9 @@
 # Notes taken on learning Javascript (mainly from Code School course)
 
+JavaScript indentations are 2 characters.
+
 #
-# Javascript_notes.txt
+# JavaScript_notes.txt
 
 Notes on the Code School initial Javascript tutorials. This so far includes:
 
@@ -9,3 +11,15 @@ Notes on the Code School initial Javascript tutorials. This so far includes:
 * Strings, declaration, concatenation, length and indices.
 * Variables: declaration, changing, operators, incrementing
 * Files: calling from HTML, syntax, printing to JavaScript console.
+
+#
+# JavaScript_notes2.txt
+
+Notes on the second Code School JavaScript course, including:
+
+* While loops.
+* For loops.
+* If-Else statements.
+* If-Else-If statements.
+* Nested conditions and loops.
+* Complex conditional.
