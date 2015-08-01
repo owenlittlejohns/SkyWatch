@@ -23,7 +23,15 @@ Notes on the second Code School JavaScript course, including:
 * If-Else-If statements.
 * Nested conditions and loops.
 * Complex conditional.
-* Built in functions: alert, confirm and prompt.
+* Built in functions: `alert`, `confirm` and `prompt`.
 * Declaring functions.
 * Global and local scope.
 * Arrays.
+
+#
+# JavaScript_notes3.txt
+
+* Function expressions, anonymous functions.
+* `map()`.
+* Passing functions to functions.
+* Immediate invocation.

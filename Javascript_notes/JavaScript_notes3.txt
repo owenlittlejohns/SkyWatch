@@ -1,0 +1,143 @@
+# Notes on the third JavaScript course from Code School
+
+#
+# Function expressions
+
+Function declaration = function that is just defined and stored in memory.
+
+Choice of functions to to build when website loads - minimise what the website has to do.
+
+Can build functions on the fly, within code, rather than at program load time.
+
+Function expression within code is called differently:
+
+```
+var diff = function diffOfSquares(a, b){
+    return a*a - b*b;
+};
+```
+
+It is only loaded into memory when this line of code is called by the programme.
+
+As this is an assignment statement, it needs a semicolon after the last curly bracket.
+
+To call it, call the name of the variable that the function is assigned to:
+
+`diff(9, 5);`
+
+But - here's the thing, because it has a variable name, you don't need the function name. You can make it an anonymous function:
+
+```
+var diff = function (a, b){
+    return a*a - b*b;
+};
+```
+
+If you try to print the variable the function is assigned to, i.e.:
+
+`console.log(diff);`
+
+It will return the code for the function.
+
+Stored functions can be passed to other functions!
+
+```
+var greeting;
+...code to set newCustomer to true or false...
+
+if (newCustomer){ 
+   greeting = function(){
+     alert("Message!");
+   };
+} else {
+  greeting = function(){
+     alert("Message2!");
+  };
+}
+
+closeTerminal(greeting);
+function closeTerminal(message){
+	 message();
+}
+
+```
+
+#
+# Using function expressions with arrays and map()
+
+Have an array of numbers:
+
+`var numbers = [12, 4, 3, 9, ...];`
+
+And an array of results:
+
+`var results = numbers.map(*some coolFunction goes in here*);`
+
+Map always takes a function as a parameters. It applies `coolFunction` to each cell in turn.
+
+`map()` works like a loop. It compresses the loop to one line of code.
+
+You can also pass a function (in full) to the `map()` method:
+
+```
+var results = numbers.map(function (arrayCell){
+    	      		     return arrayCell * 2;
+			  }
+);
+```
+
+Short functions called this way are often condensed into one line:
+
+```
+var results = numbers.map(function (arrayCell){return arrayCell * 2;});
+```
+
+#
+# Returning functions and immediate invocations:
+
+Returning a functions:
+
+```
+function mystery () {
+  *some mystery code*
+  return *a function expression*
+}
+
+```
+
+A queue - add new elements to the end of it. So push().
+
+Remove things from the queue - use shift() method. It pops things off the front and returns.
+
+```
+function function1 (par1, par2, par3){
+  if(condition1){
+    return function(){*function code*};
+  } else {
+    return function(){*alternative function code*};
+  }
+}
+var par1 = val1;
+var par2 = val2;
+var par3 = val3;
+
+var result = function1(par1, par2, par3);
+
+result();
+```
+
+You can immediately call the function instead of storing it.
+
+So instead of: `var result = function1(par1, par2, par3);`
+
+You have: `result = function1(par1, par2, par3);`
+
+But it will just return the function, but does include the correct values.
+
+To evaluate (invoke) it immediately:
+
+`result = function1(par1, par2, par3)();`
+
+If you have an array of functions and want to call the ith function in it:
+
+`var result = arrayOfFunctions[i](input pars);`
