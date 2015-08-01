@@ -23,3 +23,7 @@ Notes on the second Code School JavaScript course, including:
 * If-Else-If statements.
 * Nested conditions and loops.
 * Complex conditional.
+* Built in functions: alert, confirm and prompt.
+* Declaring functions.
+* Global and local scope.
+* Arrays.

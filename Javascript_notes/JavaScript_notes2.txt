@@ -238,3 +238,208 @@ if (trainsOperational > 0){
   console.log("There are no trains running today!");
 }
 ```
+
+#
+# Built-in functions:
+
+Functions that can be used to get and send information:
+
+`alert()` - sends a message to the user in a pop-up window
+
+```
+alert("Alert text");
+```
+
+`confirm()` - asks users for consent to move forward.
+
+```
+confirm("Do you want to do this?");
+```
+
+Ok or cancel - returns True or False boolean.
+
+`prompt("String")` - makes a pop-up window that allows user to enter text
+
+You can store information from a prompt function:
+
+```
+var userName = prompt("What is your name?");
+```
+
+Could use the prompt() and confirm() commands to get information and check it is
+correct.
+
+```
+var userName = prompt("What is your name?");
+confirm("Is " + userName + " your name?");
+```
+
+But you need to check someone has entered text in the prompt:
+
+Use the `typeof` operator:
+
+`typeof true` returns "boolean"
+`typeof "String"` returns "string"
+`typeof 42` returns "number"
+`typeof undefined` returns "undefined"
+`typeof null` returns "object"
+
+If the user ever selects cancel - the return from a prompt because "null", which has a type of "null"
+
+What if a confirm() function is cancelled? If cancelled it will be false.
+
+Want a confirmation flag, continue until the user confirms a name.
+
+```
+var gotName = false;
+while(gotName == false){
+  var userName = prompt("What is your name?");
+  if ( confirm("Are you sure " + userName + " is your name?")){
+     alert("Hi, " + userName + "!");
+     gotName = true;
+  }
+}
+```
+
+#
+# Declarations:
+
+Building your own functions.
+
+Function takes input, does stuff to it and outputs.
+
+```
+function functionName (input1, input2) {
+  *code doing stuff*
+  return outputStuff
+}
+```
+
+Example, summing two cubed numbers:
+
+```
+function sumOfCubes (a, b){
+  var aCubed = a * a * a;
+  var bCubed = b * b * b;
+  var sum = aCubed + bCubed
+  return sum;
+}
+```
+
+Then call as `sumOfCubes(4, 9);`
+
+More efficient:
+
+```
+function sumOfCubes (a, b){
+  return a * a * a + b * b * b;
+}
+```
+
+Expressions can be passed in instead of parameters:
+
+`sumOfCubes(1 + 3, 3 + 5);`
+
+Also variable names.
+
+#
+# More complicated functions:
+
+Count the number of Es in a user entered phrase.
+
+```
+function countE () {
+  inputStr = prompt("Please enter a phrase:");
+  if typeof(inputStr) != "string"{
+    alert("Not a valid string"");
+    return false;
+  } else {
+    eCount = 0;
+    for (var index = 0; index < inputStr.length; index++){
+    	if(inputStr.charAt(index) == "e" || inputStr.charAt(index) == "E"){
+	  eCount++;
+	}
+    }
+    alert("There are " + eCount + "E's in \"" + inputStr + "\".");
+    return True;
+  }
+}
+```
+
+#
+# Local and global scope:
+
+Functions will always declare a new local variable.
+
+i.e.:
+
+```
+var x = 6;
+function add(a,b){
+  var x = a + b;
+  return x;
+}
+```
+
+The `x` within the function is only local. The global `x` is still 6.
+
+But if you don't declare the variable, then it assumes you are using the global.
+
+```
+var x = 6;
+function add(a,b){
+  x = a + b;
+  return x;
+}
+```
+
+In the above function, the global value of `x` is changed in the function.
+
+#
+# Arrays:
+
+Indices are 0 - N -1.
+```
+var arrayName = ["bob", "bob2", "bob3"];
+arrayName[0];
+arrayName[2] = "bob4";
+```
+The last bit returns the first entry.
+
+Arrays have methods.
+
+`arrayName.pop()` removes the last entry, and returns it.
+`arrayName.push()` adds an entry to the end of the array.
+
+Arrays can hold anything - combinations of them and also arrays as their elements.
+Arrays can also accept variables - evaluating them as they make the array.
+
+Indexing array in an array (2d array):
+
+`mainArray[index1][index2]`
+
+#
+# Using loops on an array:
+
+```
+var numberList = [2, 5, ...]
+for var i = 0; i < numberlist.length; i++){
+    console.log("..." + numberList[i]);
+}
+```
+
+Empty cells:
+
+Can define an empty list:
+
+```
+var numberList = [];
+```
+
+Or have gaps with undefined:
+
+```
+numberList[5] = undefined;
+```
+
+`array.length;` will also print the number of elements in an array.
