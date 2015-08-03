@@ -11,4 +11,4 @@ Notes from "Front-end foundations" course, including:
 * Links (absolute and relative) using `<a>`, and `href` and `target` attributes.
 *CSS selectors.
 * Hexadecimal selectors.
-* The box method.
+* The box model: `content`, `padding`, `margin`, `border`

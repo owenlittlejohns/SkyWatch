@@ -190,6 +190,132 @@ A = 10, B = 11, C = 12, D = 13, E = 14, F = 15.
 16,770,000 ish colour combinations.
 
 #
-# The box method:
+# The box model:
 
+What about how much vertical and horizontal spacing between things (i.e. after ``<h1>`)
 
+Every tag has it's own rectangle around it - the box.
+
+Block-level tags take up the entire width of the container they are in. In a lot of instances, this is the `<body>`. So new boxes get pushed down to be below the previous boxes.
+
+Tags that aren't bloack level, are inline-level. These just flow along with content around them - like anchor tags (links).
+
+`img`, `input` and `label` are all other inline level tags.
+
+You can change in CSS, tag properties between inline and block level.
+
+```
+ul li {
+   display: inline;
+}
+```
+
+How does the browser know how much space goes between the boxes?
+
+The box model describes the borders and spacing between each tag, it has four components:
+
+1. Content area = area containing the text or images, etc.
+2. Padding = layer around edges of content area (left, right, top, bottom)
+3. Border = outside the padding layer.
+4. Margins = outside of border.
+
+Controlled by CSS properties:
+
+either:
+
+```
+h2 {
+  padding-top: 6px;
+  padding-right: 3px;
+  padding-bottom: 0;
+  padding-left: 0;
+}
+```
+
+or more simply:
+
+```
+h2 {
+  padding: 6px	3px	0	0;
+}
+```
+(in order top, right, bottom, left)
+
+To add a border, either:
+
+```
+h2 {
+   border-width: 6px;
+   border-style: solid;
+   border-color: black;
+}
+```
+
+or 
+
+```
+h2 {
+   border: 6px	solid	black;
+}
+```
+
+If you want to apply to just one side:
+
+```
+h2 {
+   border-bottom: 6px	solid	black;
+}
+```
+
+Margins are added the same way as padding (short or long way)
+
+Borders are used obviously.
+
+Padding should be used to adjust the size of a box, without adjusting the size of the content inside the box. (The content area increases, but the content does not change size. Think about it like this - if the content area had a pretty box around it, the box would change size, but the text would stay the same size.
+
+Margins should be used to add space between two boxes. The content area stays the same size.
+
+But why is there automatic spacing? The browser has a default style sheet. You must override them to make them what you want.
+
+If you want to remove all padding, borders and margins:
+
+```
+html, body, h1, h2 h3, p, ol, ul, li, a {
+  padding: 0;
+  border: 0;
+  margin: 0;
+}
+```
+
+You can then restart from a safe baseline, knowing that you are the one affecting the CSS box models.
+
+One approach to start making your page nice would be:
+
+1) Start with the `<body>`: (Add 20px margin to all sides). Gets away from edges of screen.
+2) `<h1>` Add a top and bottom margin (give vertical spacing, 10px top, 15px bottom)
+3) `<h2>`, then `<h3>` adding top and bottom margin.
+4) Then thing about borders. Maybe a bottom border for `<h3>`:
+```
+h3 {
+   margin: 15px 0 15px 0;
+   border-bottom: 1px solid #CCCCCC;
+}
+```
+
+If you thing the border is too close to the content, then add some padding:
+
+```
+h3 {
+   margin: 15px 0 15px 0;
+   border-bottom: 1px solid #CCCCCC;
+   padding-bottom: 3px;
+}
+```
+
+Padding can be used to index list items.
+
+```
+ul, ol {
+  padding: 0 0 0 5px;
+}
+```
