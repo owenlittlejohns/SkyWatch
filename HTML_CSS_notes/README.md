@@ -12,3 +12,12 @@ Notes from "Front-end foundations" course, including:
 *CSS selectors.
 * Hexadecimal selectors.
 * The box model: `content`, `padding`, `margin`, `border`
+* CSS selectors and classes across multiple pages (using `main.css`)
+* Organising page layout: `div` and specific `class` attributes to override generic rules for tags.
+* Fixed widths.
+* Block and content alignment: `margin: 0 auto 0 auto;` and `text-align: center;`.
+* Content images.
+* Background images.
+* Floating images.
+* Adjusting font styles.
+* Basic form designs.

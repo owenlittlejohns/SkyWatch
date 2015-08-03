@@ -144,7 +144,10 @@ parentTag childTag:first-child{
 }
 ```
 
-Where do you put CSS?
+Similarly: `last-child`.
+
+#
+# Where do you put CSS?
 
 Simplest:
 
@@ -319,3 +322,436 @@ ul, ol {
   padding: 0 0 0 5px;
 }
 ```
+
+#
+# CSS selectors (more):
+
+Wanting to set tag settings only on specific instance.
+
+Inside the actual tag we want to alter, give it a class and set to "nav":
+
+`<ul class="nav"><li>...</li></ul>`
+
+Then in CSS:
+
+```
+.nav {
+     padding-left: 0;
+}
+```
+
+So using `.class` you can change things.
+
+If you want to do things to only (in this example) anchors in the unordered list with the "nav" class:
+
+```
+.nav a {
+     color: #0000af;
+     text-decoration: none;
+}
+```
+
+Order you write class and type selectors is important. The thing written lower down is enacted. So typically, make broad rules for generic tags first, then underneath state the specific class selectors.
+
+Using CSS on multiple HTML pages:
+
+CSS can be written in a text file (main.css)
+Then in the HTML file, import the CSS:
+
+Use `<link>`. It has no closing tag. This is in place of `<style tag>`
+
+`<link type="text/css" rel="stylesheet" href="main.css">`
+
+rel = relationship - apply all the CSS to this page
+href = file with CSS styles in.
+
+But then if you want to change an individual page on top of the main.css defaults, create a class to this specific tag.
+
+Then change the CSS properties in main.css, but underneath the main selector.
+
+#
+# Organising page layouts:
+
+`div` is a block way to group related content on a page.
+
+For example: if we want a header `<div>`, put a `<div>` block around all the stuff that is grouped.
+
+Typically, you could have a header and a main-content block, so inside the `<div>` tags (remember the closing tag) set a class to each:
+
+```
+<body>
+  <div class="header">
+    <h1> Recipe World</h1>
+    <ul class="nav">...
+  </div>
+  <div class="main-content">
+    <h2>Magic Cake</h2>
+    ....
+  </div>
+<body>
+```
+
+Can now set the padding, borders and margins seperately to the borders and margins.
+
+`<div>` automatically wants to take the whole width of the page, but can set the width.
+
+```
+.main-content {
+  width: 500px;
+  padding: 20px;
+  border: 1px solid #dddddd;
+  margin: 30px 0 0 0;
+}
+```
+
+Content within this `<div>` will have to flow to fit this fixed width.
+
+To centre content:
+
+Two ways in CSS.
+
+1) If you want to centre the entire block level tag, and it has a fixed width, then set the right and left margins to "auto":
+
+```
+.main-content {
+  width: 500px;
+  padding: 20px;
+  border: 1px solid #dddddd;
+  margin: 30px auto 0 auto;
+}
+```
+
+This centres the total content (but not the alignment). "auto" means take as much space as you can.
+
+
+2) If you want to centre content inside block level tag,  `text-align: center;`
+
+```
+h1 {
+  color: #ffffff;
+  margin: 0 0 15px 0;
+  text-align: center;
+```
+
+Why fixed widths, rather than relative widths?
+
+Fixed widths are good for learning. But relative are perhaps more useful in the real world.
+
+#
+# Content images:
+
+Three types of images:
+
+Content images: Just as necassary to the page as text (ie Amazon product images)
+Layout images: appear in the background of the page.
+User interface images: Such as little arrows for drop down menus.
+
+Images made with `<img>` tag. Like `<link>` it is an "empty" tag and so doesn't have a closing tag.
+
+The file of the image you want is denoted by the `src` attribute.
+
+`<img src="cake.png">`
+
+But it makes more sense to put images in their own folder, but remember to update the relative path, i.e.: `src="images/cake.png"`
+
+Images are loaded by the browser requesting the page HTML. This reads the `<img>` tag, and the browser requests the `src` in the `<img>` tag. So it is a separate request to the server.
+
+Images should also have an `alt` attribute. This describes the content of the image:
+
+`<img src="cake.png" alt="Magic Cake Photo">`
+
+This is for users who can't see the content.
+
+`<img>` is an inline level tag - so usually goes inside another block level tag, for example `<li></li>`
+
+Another use of content images is for logos.
+
+`<img>` is an inline level tag, and so can't be aligned with the `text-align` property. Instead, set `display: block;` in the css, and then use the `margin: auto;` approach.
+
+```
+.header img{
+  display: block;
+  margin: 0 auto 0 auto;
+}
+```
+
+#
+# Background images: 
+
+Not added in HTML, but in CSS.
+
+They have several properties:
+
+First `background-color`. This should ALWAYS be set in case the background fails to load.
+
+Next `background-image: url(path/to/file);` sets a background image. You do not need quotes around a filename in the CSS path to the file.
+
+Next `background-position`. It has two keywords, the first has to be one of:
+`top`, `center` or `bottom`.
+
+The second must be one of: `left`, center` or `right`.
+
+Next, if it is a small picture, you can set it to repeat, using `backgroun-repeat`. Setting to `repeat` makes the image tile. Other options include `repeat-x` and `repeat-y`, to get it to repeat in only one direction. Or `no-repeat` to ensure no repeating.
+
+```
+body {
+  background-color: #5f5f5f;
+  background-image: url(images/of/cheese.jpg);
+  background-position: top left;
+  background-repeat: repeat;
+}
+```
+
+`background` can also be shortened into one line:
+
+```
+body {
+  background: #5f5f5f url(images/of/cheese.jpg) top left repeat;
+}
+```
+
+To use as a background to text, you might want an empty `<div>` in HTML.
+
+```
+  <div class="featured-image">
+  </div>
+```
+
+Then in CSS:
+
+```
+.featured-image {
+  width: 630px;
+  height: 246px;
+  background: #ffffff url(images/featured-cake.png) top left no-repeat;
+}
+```
+
+The height and width are specifically set to be the size of the image.
+
+But as it is a background image, you can make a text tag a child of the div.
+
+So:
+
+
+```
+<div class="featured-image">
+  <h3>Text in here</h3>
+</div>
+```
+
+And can the use CSS to alter the text content area.
+
+Also, new property of text: `text-transform: uppercase;`
+
+Typically when dealing with backgrounds, start with the biggest area first, at the back. Then work up in layers of smaller area.
+
+#
+# Floating images:
+
+When you need an image to the left of some text.
+Image is inline, text is block level.
+
+We need to use `float`:
+
+```
+<ul class="recipes">
+  <li>
+    <img src=...>
+    <h3><a href=...>Magic Cake</a></h3>
+    <p>...</p>
+  </li>
+</ul>
+```
+
+Then in CSS:
+
+```
+.recipes img {
+  float: left;
+  padding-right: 10px;
+}
+```
+
+This makes the picture sit next to the left of two block text leves.
+
+CSS Cross country course has a lot of use cases.
+
+#
+# Adjusting font-styles:
+
+There are default font styles.
+
+In the body selector, start by:
+
+```
+body {
+  font-family: Helvetica, "Times New Roman", Arial, sans-serif;
+```
+
+These are listed in order you want the browser to try and load them. Also, if the font name is multiple separate words, put quotation marks around the whole string.
+
+But what about sizes and weights. Reset everything to a basic default property:
+
+```
+html, body, h1, h2... {
+    font-size=100%;
+    font: inherit;
+}
+```
+
+Then for individual selectors, you can change things like `font-size`:
+
+```
+h2 {
+  font-size: 26px;
+}
+```
+
+For `font-size` you can use pixels, percentages and ems. Pixels are fixed, and perhaps more straightforward to start with.
+
+`font-weight: bold;` is another example, `normal` is the default.
+
+Other options:
+`normal`, `lighter`, `bold`, `bolder`, or `100`, `200`, ... `900`
+
+Other properties:
+
+`font-style: italic;`
+`text-transform: uppercase;`
+
+Snazzy way to show a copyright symbol: `& copy;`
+
+Adjusting line height:
+
+Like a margin for each line (spacing) of text.
+
+`line-height: 26px;`
+
+#
+# Creating web forms:
+
+Way to get input from user.
+
+Have labels, inputs, text areas and buttons.
+
+The whole thing is surrounded by a `<form>` tag:
+
+Simple example:
+
+```
+<form>
+  <label>Recipe Name</label>
+  <input type="text">
+  <input type="submit" value="Click to Submit">
+</form>
+```
+
+"submit" input type - would make it all get sent to the server.
+
+Different values for the `type` field include:
+
+`text`, `checkbox`, `radio`, `file`, `password` and `submit`
+
+File is for uploading a file.
+
+Attributes need to be added to the label tags to tie it all together:
+
+```
+<form>
+  <label for="recipe-name">Recipe Name</label>
+  <input type="text" id="recipe-name">
+  <input type="submit" value="Click to Submit">
+</form>
+```
+The `for` and `id` are used to associate the label with the input.
+
+If you want to add a lot of text, use a `<textarea>` tag. (requires a closing tag, unlike `<input>`)
+
+```
+<form>
+  <label for="ingredients">Ingredients</label>
+  <textarea id="ingredients"></textarea>
+  <input type="submit" value="Click to Submit">
+</form>
+```
+
+"textareas" do not need a type, as they can only contain text.
+
+Styling forms.
+
+Probably want to make them block, rather than inline.
+
+```
+label, input {
+  display: block;
+}
+```
+
+This makes the label above the place to input data.
+
+Probably want a bottom margin to the label and input. Also a width for all the inputs that is the same.
+
+```
+label {
+  margin-bottom: 10px;
+}
+input {
+  margin-bottom: 25px;
+  width: 500px;
+}
+```
+
+But now the submit button would be really wide. So you can use an attribute selector. i.e. if an attribute of a tag is a particular value, then apply the CSS to it:
+
+```
+input[type=submit] {
+  width: 120px;
+  font-size: 20px;
+}
+```
+
+You don't need quotes about the attribute value.
+
+Similarly with text inputs, make their border a different colour:
+
+```
+input[type=text] {
+  border: 2px solid #7facaa;
+  font-size: 24px;
+  padding: 7px;
+}
+```
+
+The `font-size` and `padding` routines are how to change the height (you can't just use `height` in this tag)
+That way the text is nice and big, and not too close to the border.
+
+For a text area, though, you can use `height`.
+
+What about a checkbox:
+
+```
+<form>
+  <label for="newsletter"><Get Newsletters?</label>
+  <input type="checkbox" id="newsletter">
+  ...
+</form>
+```
+
+You usually want the label and box inline.
+
+To undo the blocking in this instance, you use an attribute selector:
+
+```
+input[type=checkbox], label[for=newsletter] {
+  display: inline;
+}
+```
+
+#
+# Useful links:
+
+Mozilla Developer Network. Particularly HTML Element reference and attributes.
+
+"Learn to Code HTML and CSS" is another good resource. It overlaps with Code School.
+There is also CodePen. It's like a live preview for prototyping. Really COOL.
