@@ -141,3 +141,173 @@ To evaluate (invoke) it immediately:
 If you have an array of functions and want to call the ith function in it:
 
 `var result = arrayOfFunctions[i](input pars);`
+
+#
+# Closure:
+
+Closures used to build "function factories".
+
+An example of a closure, is in the last course, where you are returning a function with variables that weren't created in that function. 
+
+When we return a function from a function, where the variables were made in the external function, we have a closure. The variables are still available outside the function?
+
+A small example:
+
+A closure wraps up an entire environment, binding variables from ther scopes (so other functions etc).
+
+```
+function testClosure (){
+  var x = 4;
+  return x;
+}
+```
+
+`x` is local and can only be accessed within the `textClosure` function.
+Accessing `x` outside the `testClosure` will not work.
+
+Now:
+
+```
+function testClosure (){
+  var x = 4;
+  function closeX() {
+    return x;
+  }
+}
+```
+
+The inner function can access the outer function's variables, because they seem to be global variables to it.
+
+When looking for variables, the inner function first looks inside it's own code, then outwards into the outer function. If necessary it would keep going. It then assigns the value as determined outside.
+
+Then we assign the results of the outer function to a variable:
+
+`var checkLocalX = testClosure();`
+
+This returns the value, but even though the function's, scope is closed, we can still access the value.
+
+Closures helpful in function "construction zones". They make the creation of very similar functions very efficient.
+
+Imagine a submarine, ship and seagull. We could make a ticket maker for each of them.
+
+```
+function buildCoveTicketMaker( transport ) {
+  return function ( name ) {
+    alert("Here is your ticket via the " + transport + ".\n" + "Welcome to the Cold Closures Cover, " + name + "!");
+  }
+}
+```
+
+If we wanted ticket makers for the three things:
+
+```
+var getSubTicket = buildCoveTicketMaker("Submarine");
+var getShipTicket = buildCoveTicketMaker("Ship");
+var getGullTicket = buildCoveTicketMaker("Gull");
+```
+
+If you call `getSubTicket` it will look like they all have `transport`, except they have the actual values. But the named variable is still undefined. We need to call the ticket makers:
+
+```
+getSubTicket("Mario");
+getShipTicket("Luigi");
+getGullTicket("Bowser");
+```
+The functions all get called, the alert gets sorted. 
+
+Okay, so here is how you think about it. The double function thing `buildCoveTicketMaker` is called. It returns an anonymous  function - which has one of the values (`transport`) determined, but it means that the variable it is assigned to (i.e. `getSubTicket`) is now just a call to that inner function. So, `getSubTicket` is actually just the anonymous function, with `transport` set to sub. When you call `getSubTicket` you need to call it with all the required parameters of the anonymous function (i.e.: `name`).
+
+#
+# Modifying bound values after closure:
+
+Passenger tracker - how many times have we given a ticket to specific mode of transport.
+
+```
+function buildCoveTicketMaker( transport ) {
+  var passengerNumber = 0;
+  return function ( name ) {
+    passengerNumber++;
+    alert("Ticket using " + transport + " Welcome, " + name + "you are passenger #" + passengerNumber);
+  }
+}
+```
+
+This will increase the number of tickets for that mode of transportation.
+Every time we call the ticket maker, it will increment the counter.
+
+#
+# More on closure:
+
+Common mistakes:
+
+1) Loops!
+
+Example give a specific passenger a torpedo to look after:
+
+```
+function assignTorpedo ( name, passengerArray ){
+  var torpedAssignment
+  for (var i = 0; i<passengerArray.length; i++) {
+    if (passengerArray[i] == name) {
+      torpedoAssignment = function () {
+        alert("Ahoy, " + name + " Man post at torpedo #" + (i+1) + "!");
+      }
+    };
+  }
+  return torpedoAssignment;
+}
+
+var subPassengers = ["Luke", "Leia", "Han", "Chewie", "Yoda"]
+var giveAssignment = assignTorpedo("Chewie", subPassengers);
+// At this point the result is the alert with "Chewie" in it.
+giveAssignment();
+```
+
+The result is torpedo 5, not 4, where Chewie is in the array.
+
+What happens is closures bind at the last opportunity. So they capture the final variable states. The loop counter gets to the end, and the value will be the last value of i, not the one where the condition was met.
+
+To avoid this:
+
+1) Could make the loop return immediately upon meeting the condition:
+
+```
+function assignTorpedo ( name, passengerArray ){
+  var torpedAssignment
+  for (var i = 0; i<passengerArray.length; i++) {
+    if (passengerArray[i] == name) {
+      return function () {
+        alert("Ahoy, " + name + " Man post at torpedo #" + (i+1) + "!");
+      };
+    }
+  }
+  return torpedoAssignment;
+}
+
+var subPassengers = ["Luke", "Leia", "Han", "Chewie", "Yoda"]
+var giveAssignment = assignTorpedo("Chewie", subPassengers);
+// At this point the result is the alert with "Chewie" in it.
+giveA
+```
+
+This will have the exact number at the moment of meeting condition.
+
+Or, we could do it more like the submarine example:
+
+```
+function makeTorpedoAssigner ( passengerArray ) {
+  return function ( name ) {
+    for (var i = 0; i<passengerArray.length; i++) {
+      if (passengerArray[i] == name {
+        alert("Ahoy, " + name + " Man post at torpedo #" + (i+1) + "!");
+      }
+    }
+  };
+}
+
+var subPassengers = ["names"];
+var getTorpedoFor = makeTorpedoAssigner(subPassenger);
+getTorpedoFor("Chewie");
+```
+
+So in this example, the closure only captures the name, not the index. The index is taken care of later on.

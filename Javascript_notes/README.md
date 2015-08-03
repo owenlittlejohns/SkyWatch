@@ -35,3 +35,4 @@ Notes on the second Code School JavaScript course, including:
 * `map()`.
 * Passing functions to functions.
 * Immediate invocation.
+* Closure.
