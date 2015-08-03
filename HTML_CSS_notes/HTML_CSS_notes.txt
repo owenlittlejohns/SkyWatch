@@ -88,3 +88,108 @@ You should probably use relative links whenever dealing with the same server.
 Creating a link to another website:
 
 Use an absolute link.
+
+#
+# CSS (Cascading Style Sheets):
+
+Use it to style HTML (used to make colours attributes and use tags to make things work).
+
+CSS is a seperate language describing how tags should look.
+
+CSS works by writing selectors that select tags and change how the act to make your HTML look a specific way.
+
+
+For example:
+
+A paragraph tag in HTML: `<p>This is a paragraph!</p>`
+
+Can be altered by CSS, start by naming the tag:
+
+```
+p {
+  text-decoration: underline;
+  otherPropertyName: oneOfSeveralPropertyValues;
+}
+```
+
+You must have the colon, semicolon and curly brackets. Within the curly bracket you can have mulptiple properties defined.
+
+All instances of that one tag will be affected.
+
+But if you want to only affect a child tag of another tag, you use a "descendent selector":
+
+```
+ul li {
+   propertyName: value;
+}
+```
+
+`ul` is the parent tag, and `li` is the child. So only `li` is altered if it is a child of `ul`.
+
+Pseudo-selector: only affects a tag if certain conditions have occured:
+
+```
+tag:rule {
+  propertName: propertyValue;
+}
+```
+
+For example, `rule` could be `hover`, so CSS only is enacted when the mouse hovers over the text.
+
+Another is `first-child` - it will only affect the first child tag inside parent. i.e.:
+
+```
+parentTag childTag:first-child{
+  stuff: stuff;
+}
+```
+
+Where do you put CSS?
+
+Simplest:
+
+Make `<style>` tag inside the `<head>` tag of the HTML:
+
+```
+<html>
+  <head>
+    <style type="text/css">
+      tag {
+          propertyName: propertyValue;
+      }
+    </style>
+  </head>
+  <body>
+  ...
+  </body>
+</html>
+
+```
+
+#
+# Hexadecimal colors:
+
+Often used in CSS.
+
+red = `#FF0000`
+black = `#000000`
+yellow = `#FFFF00`
+
+Each hex colour has three parts:
+
+First two digits are how much red, the next two are how much green and the last two are how much blue. `0` is none and `F` is full. Equivalent to 0 to 255.
+
+white is all of everything.
+
+Hexadecimal:
+
+Instead of multiplying each progressive higher digit by ten, you do it be 16.
+
+A = 10, B = 11, C = 12, D = 13, E = 14, F = 15.
+
+16,770,000 ish colour combinations.
+
+#
+# The box method:
+
+
