@@ -553,4 +553,328 @@ But if there is no property of `type` in one of the properties, then it is `unde
 Again, this can go inside the object, changing it to a function, with a return and also the reference to `aquarium` becomes `this`.
 
 #
+# Prototypes:
+
+(and inheritance). Lots of objects with some small amount of similar functionality/properties. We don't want to code it all up a lot - it's time consuming and more memory intensive.
+
+Objects have hidden properties, such as:
+
+`valueOf`, `constructor`, `toLocaleString`, `toString`, `isPrototypeOf`, `propertyIsEnumerable`, `hasOwnProperty`...
+
+An object's parent is called it's "prototype", all the methods above come from the object prototype.
+
+When a generic object is created, it gets given a load of extra properties from the object prototype.
+
+Passing down properties is called "inheritance". It stops having many storage locations for the same information.
+
+All objects made so far inherit from the object prototype, but all native JavaScript data structures inherit all of their properties and methods from their own prototypes.
+
+i.e.:
+
+```
+var myArray = ["This", "Array", "inherits", "properties"];
+```
+
+The array prototype gives the array the `pop()`, `push()`, `shift()`, `reverse()`, `sort()`, `join()`, `slice()`, `length` methods.
+
+The same with strings:
+
+`var myString = "A secret child of the string prototype";`
+
+Properties passed along include:
+
+`length`, `concat()`, `toUpperCase()`, `charAt()`, `indexOf()`, `toLowerCase()`, `trim()`, `replace()`, `substring()`
+
+`var myNumber = 6;`
+
+Example properties from the Number Prototype:
+
+`toFixed()`, `toExponential()`, `to Precision()`
+
+And the function prototype includes:
+
+`name`, `bind()`, `call()`, `apply()`
+
+The prototypes inherit directly from the object prototype. So a string variable doesn't just get the string methods, it gets the object methods, too. (e.g.: `myString.toString()`, `myString.isPrototypeOf()`)
+
+The object prototype is an ancestor of the string prototype.
+
+While the properties are inherited, they are not owned by the inheriting object. They are owned by the prototypes.
+
+For example, if you call `myString.hasOwnProperty()` the string checks with the string prototype, because it doesn't contain it directly. It's not in the string prototype, but it is in the object prototype - further up the prototype chain.
+
+What if we wanted to add some base values to all objects of a similar type?
+
+Say for example you had a bunch of strings (quotes from characters in the Wizard of Oz) and you want to count the number of "a"s in each quote.
+
+So you build a function to do the counting. Then you can add the property to the string prototype.
+
+`String.prototype` finds the prototype for all strings. To add a method to it, just use the dot notation as before:
+
+```
+String.prototype.functionName = function ( letter ) {
+  var letterCount = 0;
+  for (var = 0; i<this.length; i++) {
+    if (this.charAt(i).toUpperCase() == letter.toUpperCase() {
+      letterCount++;
+    }
+  }
+  return lettercount;
+};
+```
+
+As the string is calling the method, you don't need to include the string as an input parameter.
+
+`this` always refers to the calling object, in this case the specific string - not the String.prototype.
+`toUpperCase()` is super useful for character comparison - if you don't care if the character is lower or upper case.
+
 #
+# Inheritance and constructors.
+
+You can also create objects using `object.create()`. You can do this to create objects that have inheritance from existing objects.
+
+Example - set up a shoe object:
+
+`var shoe = {size: 6, gender: "women", construction: "slipper"};`
+
+Then set up another object:
+
+`var magicShoe = Object.create( shoe );`
+
+`magicShoe` would be exactly the same as `shoe`.
+
+You can then add new properties to the `magicShoe`, but the original `shoe` won't change.
+
+`Object.prototype.isPrototypeOf(shoe);` Asks if the Object prototype is a prototype of `shoe` - returns `true` (if it wasn't it would return `false`).
+
+Another example would be `shoe.isPrototypeOf( magicShoe );`.
+
+The `isPrototypeOf()` method searches the whole prototype chain.
+
+We could build a prototype with the right properties, but set them to `undefined`, so that the right properties are there.
+
+`var shoe = { size: undefined, gender: undefined, construction: undefined}`
+
+But then you'd have to set the values of each property - which is still time consuming.
+
+Instead:
+
+Establish all the common properties of the shoe class.
+
+A class is a set of Objects that all share and inherit from the same basic prototype.
+
+So all shoes have `size`, `color`, `gender`, `construction`, `putOn()`, `takeOff()`
+
+Some have: `laceColour`, `laceUp()`, `jewels`, `bowPosition`
+
+So with the set of common properties, we can build a constructor function for a shoe object. It will set up inheritance, and assign specific properties. If you are making a constructor (a Class of objects) you must capitalise the function name:
+
+```
+function Shoe (shoeSize, shoeColour, forGender, constructStyle) {
+  this.size = shoeSize;
+  this.colour = shoeColour;
+  this.gender = forGender;
+  this.constructor = constructStyle;
+
+  this.putOn = function () {alert("Shoe is on");};
+  this.takeOff = function () { alert("Shoe is off");};
+}
+```
+
+Each of parameters will have specific values for specific types of shoe.
+
+The `this` keyword inside a constructor automatically refers to the new instance of the class that is being made (so the new shoe object).
+
+To use the constructor you need to use the `new` keyword. (This instantiates the class).
+
+`var beachShoe = new Shoe( 10, "blue", "women", "flipflop" );`
+
+So there is a new instance of `Shoe` with those specific values.
+
+You can then call any of the methods from the constructor class, i.e.:
+
+`beachShoe.putOn();`
+
+Also, you could add extra properties that are unique to the `beachShoe`.
+
+But there is no inheritance. Each property that the shoe has belong to the shoe.
+
+Every shoe has the `putOn()` and `takeOff()` function. So you can assign a prototype to a constructor.
+
+```
+function Shoe (shoeSize, shoeColour, forGender, constructStyle) {
+  this.size = shoeSize;
+  this.colour = shoeColour;
+  this.gender = forGender;
+  this.constructor = constructStyle;
+}
+
+Shoe.prototype = {
+  putOn: function () {alert("Shoe is on");},
+  takeOff: function () { alert("Shoe is off");}
+};
+```
+
+So a prototype is basically another property of a class, and it can be given properties itself.
+
+This saves data, as each Shoe object will inherit the `putOn()` and `takeOff()` methods, rather than having then explicitly.
+
+`hasOwnProperty("property")` is a boolean to see if the property is specifically from that class or inherited.
+
+Prototypes can also refer back to the instance, for example:
+
+```
+function Shoe (shoeSize, shoeColour, forGender, constructStyle) {
+  this.size = shoeSize;
+  this.colour = shoeColour;
+  this.gender = forGender;
+  this.constructor = constructStyle;
+}
+
+Shoe.prototype = {
+  putOn: function () {alert("Your " + this.construction + "'s is on");},
+  takeOff: function () { alert("Size " + this.size + " is off");}
+};
+```
+
+So the method will look down to the instance and pull the value for the property to put in the prototype message.
+
+#
+# Overriding prototypal methods:
+
+Useful properties in the object prototype:
+
+```
+var x = 4;
+var y = "4";
+x.valueOf();
+y.valueOf();
+x.valueOf() == y.valueOf();
+```
+
+Returns:
+1) `4`
+2) `"4"`
+3) `true`
+
+`valueOf()` tries to use type coersion - if there is a number in a string, the method will try to convert that into a number.
+
+Instead, we want to compare types, too.
+
+`x.valueOf() === y.valueOf()`
+
+the triple equals operator also considers type. So different types are not the same.
+
+If you call `valueOf()` on an object created by us:
+
+```
+var Tornado = function (category, affectedAreas, windGust) {
+  this.category = category;
+  this.affectedAreas = affectedAreas;
+  this.windGust = windGust;
+};
+var cities = [["cityName1", pop1],["cityName2", pop2],["cityName3", pop3]];
+var twister = new Tornado( "F5", cities, 220 );
+twister.valueOf();
+```
+would return `Tornado {category: "F5", affectedAreas: Array[3], windGust: 220}
+
+But the array doesn't give you much help. So we want to improve the `valueOf()` method for this class.
+
+Safety first - don't overwrite a property in the Object class - only one that will override the one in the lowest method of the prototype chain - i.e. `Tornado`
+
+In this example make the `valueOf()` return the sum of all the people in all of the affected areas.
+
+```
+var Tornado = function (category, affectedAreas, windGust) {
+  this.category = category;
+  this.affectedAreas = affectedAreas;
+  this.windGust = windGust;
+};
+var cities = [["cityName1", pop1],["cityName2", pop2],["cityName3", pop3]];
+var twister = new Tornado( "F5", cities, 220 );
+
+Tornado.prototype.valueOf = function () {
+  var sum = 0;
+  for (var i = 0; i < this.affectedAreas.length; i++) {
+    sum += this.affectedAreas[i][1];
+  }
+  return sum;
+};
+twister.valueOf();
+```
+
+This then returns a sum of the people for `twister.valueOf();`
+
+The prototype chain is search most locally first, then upwards.
+
+The value updates as the cities are updated.
+`cities.push(["cityName4", pop4]);`
+So if you push a new city to the `cities` array, the result will change.
+Remember, the `twister` object belongs to the `Tornado` class, and references the `cities` array for the affected areas. So changing the `cities` array itself, changes what the object contains (well refers to).
+
+`toString()`
+
+Often a boring method. If you call it on a number, it becomes a string.
+
+If you call `toString()` on an array `arrayName.toString()`, then it produces a single string, that is every element, concatenated with a comma between.
+
+But you can override it. This is often desirable to do on an array or a function.
+
+If you call `funtionName.toString()` you get  string of the entire function.
+
+Now in the `Tornado` constructor:
+
+```
+Tornado.prototype.toString = function () {
+  var list = "";
+  for (var i = 0; i < this.affectedAreas.length; i++) {
+    if ( i < this.affectedAreas.length - 1) {
+      list = list + this.affectedAreas[i][0] + ", ";
+    } else {
+      list = list + "and " + this.affectedAreas[i][0] + "!";
+    }
+  }
+  return "This tornado has been classified as an " + this.category + ", with wind gusts up to " + this.windGusts + "mph. Affected areas are: " + list + ",potentially affection a population of " + this.valueOf() + ".";
+};
+```
+
+So the string is now very informative, well representing the object as a string.
+
+Finding an object's constructor and prototype.
+
+If you call `twister.constructor;` you get the entire constructor code for `twister`. The actual code.
+
+`twister.constructor.prototype;` Gives something like: `Object {valueOf: function, toString: function}` so it tells you what the prototype specifically for the constructor (class) is.
+
+If a prototype object is defined for a specific class, it will always be a property of the class's constructor. This is why you can do the `objectName.constructor.prototype` with dot notation.
+
+or you can do: `twister.__proto__;`
+
+`hasOwnProperty()`, helps you find where the methods are stored.
+
+Function to find the owner of a particular property:
+
+```
+Object.prototype.findOwnerOfProperty = function ( propName ) {
+  var currentObject = this; //object being searched - start at calling object
+  while (currentObject !== null){
+    if ( currentObject.hasOwnProperty(propName) ) {
+      return currentObject;
+    } else {
+      currentObject = currentObject.__proto__;
+    }
+  } // keep searching until try to go beyond Object prototype (would produce `null`
+  return "No property found!";
+};
+```
+
+To get to that bottom `return` statement, you would have to have searched the entire hierarchy chain.
+
+#
+# More useful links:
+
+coding.smashingmagazine.com/2009/02/08/50-extremely-useful-javascript-tools/
+
+javascriptkit.com - lots of readymade scripts in there.
+scripterlative.com - more scripts that are useful to use or to trace.

@@ -39,3 +39,5 @@ Notes on the second Code School JavaScript course, including:
 * Hoisting.
 * Objects.
 * Enumeration with the For-In loop.
+* Prototypes, inheritance, hierarchy.
+* Classes, overriding methods.
