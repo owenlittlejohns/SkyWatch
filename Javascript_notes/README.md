@@ -36,3 +36,6 @@ Notes on the second Code School JavaScript course, including:
 * Passing functions to functions.
 * Immediate invocation.
 * Closure.
+* Hoisting.
+* Objects.
+* Enumeration with the For-In loop.

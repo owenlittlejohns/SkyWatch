@@ -311,3 +311,246 @@ getTorpedoFor("Chewie");
 ```
 
 So in this example, the closure only captures the name, not the index. The index is taken care of later on.
+
+#
+# Hoisting:
+
+Load order of the function of the website. Load order is important in JavaScript, particularly when some parts of programme rely on others.
+
+Load order is making sure each line of code can be executed when it needs to be.
+
+When you initially open a scope, the first thing that happens is that memory will be set aside for all necassary variables and declared functions the console can see.
+
+So initially, all the variables and functions are hoisted to the top, variables are set to undefined, until the code is run.
+The functions are stored ready for use, too.
+
+So, say you define a function twice, with the same name, both get hoisted to the top, and the second instance of the function will be the one that gets used.
+
+Function expressions are not hoisted, they are treated as assignments. For example:
+
+```
+function getMysteryNumber () {
+  var chooseMystery = function() {
+    return 12;
+  }
+
+  return chooseMystery();
+
+  var chooseMystery = function() {
+    return 7;
+  }
+}
+```
+
+what JavaScript does is:
+
+```
+function getMysteryNumber () {
+  var chooseMystery = undefined; // assignment is hoisted to the top
+  var chooseMystery = undefined; // This is also hoisted, and undefined, but overwrites the previous declaration of chooseMystery.
+  chooseMystery = function () {
+    return 12;
+  }
+  return chooseMystery();
+}
+```
+
+So the code never gets to the second part of getMysteryNumber() and the first one is the one that is called.
+
+To fix hoisting, you can:
+
+1) Move the function expressions to the top, above other executable code.
+2) Make the functions outright declarations:
+
+```
+function noSeats(){
+  alert("There are no seats!");
+  return false;
+}
+```
+
+#
+# Objects:
+
+Type of data structure. Objects contain multiple related data.
+
+Data within the object container are called properties.
+
+An example:
+
+Book is an object.
+Properties: title, author, publisher, numChapter, numPages, illustrator
+
+An object is often called a composite value (it has lots of stuff in it).
+properties can be numbers, strings, arrays, functions or even other objects.
+
+An easy way is an object literal:
+
+```
+var = object1 = {property1String: val1, property2String: val2};
+
+```
+
+Curly brackets mean object.
+You can also set properties equal to variables.
+
+To access an object property:
+
+`object1.property1String;`
+
+You can change property values within an object using the dot operator.
+
+`object1.property1String = 12;`
+
+But if a propery was related to this, it would be wrong.
+
+So say you had four properties:
+
+```
+var myBox = {width: 6, height: 4, length: 5, volume: 120};
+```
+
+but you change `myBox.width`, the volume would be incorrect. Instead of hardwiring it, make it:
+`myBox.volume = myBox.width * myBox.height * myBox.length;`
+
+
+But if there was an array:
+
+`myBox.contents.push("blah")`
+
+Now the external array that the object refers to is changed. It is not an independent array.
+
+You can add properties, post creation of object.
+
+`myBox.newProperty = 24;`
+
+If the property isn't already present, then a new property would be added.
+
+You can also use brackets:
+
+`myBox["volume"]` just like Pandas data array. Indices are basically strings.
+This means that you could make a property with a space in it.
+But you can't access `myBox."any string"`. It has to be with a bracket method.
+
+Brackets also accept expressions:
+
+i.e.:
+
+```
+var myBox = {destination1: "Orlando", destination2: "Miami"};
+
+for (var i = 1, i <= myBox["# of stops"], i++) {
+  console.log(myBox["destination" + i]);
+}
+```
+this would return "Orlando" and then "Miami" from the loop.
+
+Deleting keywords:
+
+`delete myBox.contents;` this just deletes the reference in the object to the external things.
+
+If you try to delete a non-existant property, it will return true. (Because it checks if something is not there)
+
+```
+var myBox = {height: 6, length: 10, width: 12, "# of Books": 0};
+
+function addBook (box, name, writer) {
+  box["# no of Books"]++;
+  box["book" + box["# of Books"]] = {title: name, author: writer};
+}
+```
+
+So this adds objects, as properties under the names "book1", "book2" ...
+
+Referencing properties of objects that are properties of other objects.
+
+i.e.:
+
+`console.log( myBox["book1"]["author"] )` or `console.log( myBox.book1.author )`
+
+#
+# Functionality of objects:
+
+Example: have an aquarium object. It is filled with fish, which are each an oject:
+
+```
+var aquarium = {
+  Nemo: { type: "fish", species: "clownfish", length: 3.7 },
+  Dory: { type: "fish", species: "blue tang", length 6.2 },
+  "Coral Castle": { type: "environment", material: "coquina", moves: false }
+};
+```
+
+Maybe you want to add a fish, you can make a function to do that:
+
+```
+function addFish( container, name, type, species, length) {
+  container[name] = {type: type, species: species, length: length};
+}
+```
+
+or a Toy:
+
+```
+function addToy( container, name, type, material, moves) {
+  container[name] = {type: type, material: material, moves: moves};
+}
+```
+
+It would be better is these functions were within the object, instead of outside:
+
+```
+var aquarium = {
+  Nemo: { type: "fish", species: "clownfish", length: 3.7 },
+  Dory: { type: "fish", species: "blue tang", length 6.2 },
+  "Coral Castle": { type: "environment", material: "coquina", moves: false },
+  addFish: function (name, type, species, length) {
+    this[name] = {type: type, species: species, length: length}
+  }
+};
+```
+The `this` tells the object that the function is refering to the object you are currently in.
+
+How about deleting, adding a property after the object has been made:
+
+```
+aquarium.takeOut = function ( name ) {
+  this[name].name = name;
+  var temp = this[name];
+  delete this[name];
+  return temp;
+};
+```
+
+temp is a variable to hold on to the object being remove for the time being.
+
+So the `aquarium.takeOut` method does the removing from the `aquarium` object, but it can be saved. Although to make sure you don't lose the name of the object being removed, the `this[name].name = name;` line has added an extra property for later use.
+
+Using a dot, rather than the bracket method, mean that the property will be just the string "name" not the parameter value for "name".
+
+#
+# Using objects:
+
+For example how many fish are there in the tank?
+
+An object doesn't have a length, so can't loop over the number of properties.
+
+Enumeration -with the for-in loop.
+
+```
+var numFish = 0;
+for ( key in aquarium ) {
+  if ( aquarium[key].type == "fish" {
+    numFish++;
+  }
+}
+```
+
+`key` just means property. - it's like Python loops.
+
+But if there is no property of `type` in one of the properties, then it is `undefined`. So it still works.
+
+Again, this can go inside the object, changing it to a function, with a return and also the reference to `aquarium` becomes `this`.
+
+#
+#
