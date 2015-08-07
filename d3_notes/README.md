@@ -3,9 +3,33 @@
 Subdirectory containing examples of annotated code and notes on using D3.
 
 #
-# d3_example1.html
+# d3_example1.html:
 
-Taken directly from the first example on the D3 website. An annotated version of the necassary HTML and Javascript to produce a bar chart.
+An HTML page containing the basic structure to have:
+
+* CSS imported from `main.css` and `plot.css`.
+* Plotting JavaScript imported from `d3_example1.js`.
+
+#
+# d3_example.js
+
+A JavaScript file containing the script to produce the displayed figure. The primary goal for this is to produce a figure containing:
+
+* A scatter plot.
+* Buttons to produce additional lines.
+* Text about the data point that appears when the mouse hovers over the point.
+* A legend (ultimately that appears upon mouse hover over button).
+* Horizontal line, thicker main lines and dimmer others appear on mouse hover over button.
+
+#
+# main.css:
+
+A file containing CSS styling for standard HTML tags, such as `<p>` and `<h1>`.
+
+#
+# plot.css:
+
+A file containing CSS styling specifically for the d3 plot object.
 
 Structure:
 
