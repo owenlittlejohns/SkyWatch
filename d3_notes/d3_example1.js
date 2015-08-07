@@ -1,3 +1,4 @@
+// JavaScript to generate a scatter plot (eventually)
 <!-- Define some data in a variable -->
         var data = [4, 8, 15, 16, 23, 42];
 
