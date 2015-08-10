@@ -5,3 +5,16 @@
   padding: 20px;
   margin: 10px auto 10px auto;
 }
+
+.axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+    stroke-width: 1px;
+    color: 'rgba(180, 180, 180, 1.0)';
+}
+
+.axis text {
+    font-family: Helvetica, sans-serif;
+    font-size: 16px;
+}
