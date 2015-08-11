@@ -102,6 +102,22 @@ canvas.selectAll('line.verticalGrid').data(xScale.ticks(10)).enter()
 	'stroke-width': '1px'
     });
 
+// Create the function ready to draw the line:
+/* Other interpolation options include 'linear'*/
+var lineFunction = d3.svg.line()
+    .interpolate('cardinal') // This makes the interpolation curved
+    .x(function(d) { return xScale(d.x); })
+    .y(function(d) { return yScale(d.y); });
+
+// Plot the line (append to "path")
+var lineTrack = canvas.append('path')
+    .attr('transform', 'translate(' + canvasMargin["left"] + ',' + canvasMargin["top"] + ')')
+    .attr('d', lineFunction(xyData))
+    .attr('stroke', '#6766FF')
+    .attr('stroke-width', 2)
+    .attr('fill', 'none');
+
+
 // Initiate data - by defining selection to which date will be joined
 // This is in the all to select, so imagine it is chart.selectAll("div")
 var points = canvas
@@ -118,22 +134,38 @@ var points = canvas
     .attr("cy", function(d) { return yScale(d["y"]); })
 // Make the circle 4 pixels in radius and specify colour:
     .attr("r", 4)
-    .attr("fill", "#FF6766");
+    .attr("fill", "#FF6766")
+    .on("mouseover", function(d) {
+	d3.select(this).attr("r", 4).style("fill", "#67FF66");
+    })                  
+    .on("mouseout", function(d) {
+	d3.select(this).attr("r", 4).style("fill", "#FF6766");
+    });
 
-// Create the function ready to draw the line:
-/* Other interpolation options include 'linear'*/
-var lineFunction = d3.svg.line()
-    .interpolate('cardinal') // This makes the interpolation curved
-    .x(function(d) { return xScale(d.x); })
-    .y(function(d) { return yScale(d.y); });
 
-// Plot the line (append to "path")
-var lineTrack = canvas.append('path')
-    .attr('transform', 'translate(' + canvasMargin["left"] + ',' + canvasMargin["top"] + ')')
-    .attr('d', lineFunction(xyData))
-    .attr('stroke', '#6766FF')
-    .attr('stroke-width', 2)
-    .attr('fill', 'none');
 
+/*
+// Include the mouseover behaviour:
+    .on("mouseover", function(d) {
+	div.transition()
+	    .duration(200) // duration for the transition in ms.
+	    .style("opacity", 0.9);
+	div .html("<strong>x: </strong>" + d.x + "<br><strong>y: </strong>" + d.y)
+    })
+    .on("mouseout", function(d) {
+	div.transition()
+	    .duration(500)
+	    .style("opacity", 0);
+    });
+*/
+
+/*
 // Get tooltip text to pop up when the mouse hovers over a data point
+var tip = d3.select().append("div")
+    .attr('class', 'd3-tip')
+    .offset([-10, 0])
+    .html( function(d) {
+	return "<strong>x: </strong>" + d.x + "\n<strong>y: </strong>" + d.y;
+    })
 
+canvas.call(tip);*/

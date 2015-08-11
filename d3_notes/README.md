@@ -13,13 +13,27 @@ An HTML page containing the basic structure to have:
 #
 # d3_example.js
 
-A JavaScript file containing the script to produce the displayed figure. The primary goal for this is to produce a figure containing:
+A JavaScript file containing the script to produce the displayed figure. This figure currently contains:
 
-* A scatter plot.
-* Buttons to produce additional lines.
-* Text about the data point that appears when the mouse hovers over the point.
-* A legend (ultimately that appears upon mouse hover over button).
-* Horizontal line, thicker main lines and dimmer others appear on mouse hover over button.
+* An SVG container.
+* Axes, with labels.
+* Grid lines.
+* x and y data points.
+* A line interpolated between the points (`cardinal` to make it smoother).
+* Changing colour of points on mouse hover (and changing back when not).
+
+Remaining changes:
+
+* A tooltip containing text on mouse hover.
+* Multiple data sets.
+* Buttons to control multiple data sets:
+* Clicking on the buttons toggles data sets on and off.
+* Buttons above the plot area that upon a mouse hover:
+** Make other data sets fade.
+** Makes specific dataset thicker.
+** Plot other lines (temporarily).
+** Bring up a legend (with a position dependent on whether there are data in the top right corner).
+
 
 #
 # main.css:
