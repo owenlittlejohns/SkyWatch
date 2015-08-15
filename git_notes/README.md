@@ -37,26 +37,26 @@ Branching and tags:
 * `git push origin :branch_name` (delete the remote version of branch_name)
 * `git remote prune origin`
 * `git tag` (list tags)
-*# `git tag -a tag_name -m` "Commit message for new tag name)
-*# `git push --tags` (push tag name to current commit)
+ * `git tag -a tag_name -m` "Commit message for new tag name)
+ * `git push --tags` (push tag name to current commit)
 * `git checkout old_tag_name` (revert code to previously tagged version)
 
 Rebasing:
 
 * To make cleaner history for repos:
-*# `get fetch` (pull remote repo, but don't merge it)
-*# `git rebase` (hopefully sorted)
+ * `get fetch` (pull remote repo, but don't merge it)
+ * `git rebase` (hopefully sorted)
 * If conflicts occur:
-*# Edit conflicts in file
-*# `git add FILENAME` (add the new changes)
-*# `git rebase --continue` (finish the rebase)
+ * Edit conflicts in file
+ * `git add FILENAME` (add the new changes)
+ * `git rebase --continue` (finish the rebase)
 * Alternatively, undo the rebase:
 * `git rebase --abort` (undo progress on rebase)
 * Local rebasing:
-*# `git checkout branch_name` (switch to branch)
-*# `git rebase repo_branch_is_from` (add commits from original repo to new branch)
-*# `git checkout repo_branch_is_from` (switch to original repo)
-*# `git merge branch_name` (do a fast-forward merge of branch into original)
+ * `git checkout branch_name` (switch to branch)
+ * `git rebase repo_branch_is_from` (add commits from original repo to new branch)
+ * `git checkout repo_branch_is_from` (switch to original repo)
+ * `git merge branch_name` (do a fast-forward merge of branch into original)
 
 History:
 
@@ -64,10 +64,10 @@ History:
 * `git log --oneline -p` (show commit history with patches explicitly)
 * `git log --pretty=oneline` (each commit in log is only one line)
 * `git log --pretty=format: "%h %ad- %s [%an]"`, where:
-*# `%h` is SHA hash
-*# `%ad` is author data
-*# `%an` is author name
-*# `%s` is subject
+ * `%h` is SHA hash
+ * `%ad` is author data
+ * `%an` is author name
+ * `%s` is subject
 * `git log --oneline --stat` (number of insertions and deletions per commit)
 * `git log --oneline --graph` (gives a tree, SSH hash tags and commit messages)
 * `git log --since=one.month.ago --until=one.minute.ago` (log in time range)
