@@ -1,9 +1,8 @@
-# Notes on git courses from Code School
+# Notes on git courses from Code School #
 
-#
-# git_notes1.txt: git Real:
+## git_notes1.txt: git Real:##
 
-Basic commands
+#### Basic commands ####
 
 * `git add` (add files to the staging area)
 * `git commit` (commit changes)
@@ -15,7 +14,7 @@ Basic commands
 * `git checkout -- FILENAME` (revert `FILENAME` to last commit)
 * `git reset --soft HEAD^`, or ` git reset --hard HEAD^` (undo commit, `--soft` puts back in staging, `--hard` undoes commit and deletes changes. One carrot per commit to be undone)
 
-Remote repos:
+#### Remote repos: ####
 
 * `git remote add REPO_NAME URL_TO_REPOSITORY` (add remote to local machine)
 * `git remove -v` (list remotes)
@@ -24,7 +23,7 @@ Remote repos:
 * `git remote rm` (Delete remote)
 * `git clone URL_TO_REPO.git LOCAL_NAME` (clone a remote repo locally)
 
-Branching and tags:
+#### Branching and tags: ####
 
 * `git branch BRANCH` (create a new branch, or `git branch -d BRANCH` to delete it)
 * `git merge` (merge two branches)
@@ -41,7 +40,7 @@ Branching and tags:
  * `git push --tags` (push tag name to current commit)
 * `git checkout old_tag_name` (revert code to previously tagged version)
 
-Rebasing:
+#### Rebasing: ####
 
 * To make cleaner history for repos:
  * `get fetch` (pull remote repo, but don't merge it)
@@ -58,7 +57,7 @@ Rebasing:
  * `git checkout repo_branch_is_from` (switch to original repo)
  * `git merge branch_name` (do a fast-forward merge of branch into original)
 
-History:
+#### History: ####
 
 * `git log` (show commit history)
 * `git log --oneline -p` (show commit history with patches explicitly)
@@ -77,13 +76,13 @@ History:
 * `git diff branch1 branch2` (difference between two branches)
 * `git blame FILENAME --date short` (show history of commits for file)
 
-Logs:
+#### Logs: ####
 
 * Put files (or paths with wildcards) in `.gitignore`.
 * `git rm --cached NAME_OF_FILE` (to stop tracking file - then add to `.gitignore` and commit the change)
 
 
-Configuration:
+#### Configuration: ####
 
 * `git config --global color.ui true` (make user interface coloured)
 * `git config --global core.editor emacs` (make emacs the text editor for merge conflicts, etc)
