@@ -333,6 +333,7 @@ def visibility(points, ra_in, dec_in, long_obs, lat_obs, sn_ra_in, sn_dec_in, \
     obj_df.loc[night_inds[0], "day_night"] = "night"
     obj_df.loc[day_inds[0], "day_night"] = "day"
     obj_df.loc[twilight_inds[0], "day_night"] = "twilight"
+    print("Moon distance: \n", np.sum(np.isnan(obj_df["mn_dist"])))
     #"""
     # Create string for whether or not the object is observable, when and 
     # for how long

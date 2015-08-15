@@ -1,0 +1,226 @@
+d3 is a JavaScript library - not it's own language.
+d3 uses CSS 3 selector to manipulate things.
+
+Selecting and appending elements to a webpage.
+
+1) Include the d3 library.
+
+`<script src="hhtp://d3js.org/d3.v3.min.js"></script>`
+
+2) The the actual d3 code goes in some script tags (mine is outside of the main HTML page)
+
+3) First thing to do with d3:
+
+`d3.select("which CSS selector you want to select");`
+
+So, in the example code we're working on, we've given a `<div>` tag a class of `chart`. `d3.select(".class")` now knows to enact the script on these sort of tags.
+
+or `d3.select("tag").append("thing to add").text("Text to add");`
+
+When chaining together methods like this - it is better to write it on separate lines:
+
+```
+d3.select(".class")
+    .append("thing to add - ie p")
+    .text("text to add");
+```
+
+To change the colour - you use the style method:
+
+```
+d3.select(".class")
+    .append("this to append")
+    .style("property", value)
+    .text("text to add");
+```
+
+or you can use the attribute method - .attr(). That changes an attribute of the tag (i.e. the `href` in `<a href="">`)
+
+`d3` itself is an object.
+
+SVG stands for Scaleable Vector Graphics. A way to create 2d graphics on a webpage.
+
+To create an SVG shape, start by creating a canvas container (square, circle etc)
+
+So first, append an SVG element to the page:
+
+```
+var canvas = d3.select(".class")
+             .append("svg")
+             .attr("width", 500)
+    	     .attr("height", 500);
+
+// Draw a circle in the canvas
+var circle = canvas.append("circle")
+             .attr("cx", 250)
+	     .attr("cy", 250)
+	     .attr("r", 50)
+	     .attr("fill", "red")
+
+// Draw a rectangle:
+var rect = canvas.append("rect")
+           .attr("width", 100)
+	   .attr("height", 50);
+
+// Draw a line:
+var line = canvas.append("line")
+           .attr("x1", 0)
+	   .attr("y1", 100)
+	   .attr("x2", 400)
+	   .attr("y2", 400)
+	   .attr("stroke", "green")
+	   .attr("stroke-width", 10)
+```
+
+When styling SVG elements, you use attribute even for CSS stuff. It is good practice to assign code snippets to variables.
+
+"cx", "cy" attributes are the centre pixel in the x and y directions.
+"r" radius, "fill" is the fill colour.
+"stroke" is the colour of the line.
+"stroke-width" is the line width in pixels.
+Default coordinates puts things in the top left corner.
+
+#
+# Visualising data
+
+Binding data to the plot.
+
+```
+// Create data set
+dataArray = [20, 40, 50];
+
+// Create canvas
+var canvas = d3.select(".class")
+             .append("svg")
+             .attr("width", 500)
+    	     .attr("height", 500);
+
+// Make an example bar chart:
+var bars = canvas.selectAll("rect")
+            .data(dataArray)
+	    .enter()
+	        .append("rect")
+		.attr("width", function (d) {return d * 10;})
+		.attr("height", 50);
+		.attr("y", function(d, i) {return i * 100;})
+```
+
+`selectAll` is similar to `select` but selects all elements specified. (So above it selects all rectangles. It will initially return an empty selection. That selection can be used to connect to data.
+
+`data` selects the data
+
+`enter` makes a placeholder for all elements in the dataArray on the page (that aren't already on the page).
+The next `append("rect")` basically just states that for each new thing from `enter` you want a new rectangle.
+
+`d` typically refers to each data element. i is the index.
+
+If you don't specify a position for each element in data, it will just all plot over the top of each other.
+
+In data - the `y` attribute is the y position.
+
+#
+# Scales:
+
+Simpler way than making the width and height scaled by the size as before.
+
+Also, if you just scale like that, but had a maximum value, it would fill that dimension of the container, and the rest be chopped off.
+
+Instead us scales:
+
+They are treated as functions, but are objects with methods that can alter behaviour.
+
+1) should set width and height in variables at the top:
+
+2) Set scale (domain = range of data, range = range of pixels)
+
+```
+var width = 500;
+var height = 500;
+
+var widthScale = d3.scale.linear() // other choices include log
+    	       	  .domain([min, max])
+		  .range([0, width]);
+
+var colourScale = d3.scale.linear()
+    		  .domain([0,60])
+		  .range(["red", "blue"])
+
+var canvas = d3.select(".chart")
+    	      .append("svg")
+	      .attr("width", width)
+	      .attr("height", height);
+
+var bars = canvas.selectAll("rect")
+            .data(dataArray)
+	    .enter()
+	        .append("rect")
+		.attr("width", function (d) {return widthScale(d.x);})
+		.attr("height", 50);
+		.attr("y", function(d, i) {return i * 100;})
+		.attr("color", function(d) { return colourScale(d.y); })
+```
+
+Scales can also deal with colours or opacity.
+
+#
+# Groups and axes
+
+Grouping elements together to transform as a whole:
+
+We have to use the group element, which is a component of SVG.
+
+```
+var canvas = d3.select(".chart")
+    	      .append("svg")
+	      .attr("width", width)
+	      .attr("height", height)
+	      .append("g")
+	      .attr("transform", "translate(50, 50)") // move group about in canvas
+	      .call(xAxis);
+```
+
+This would go somewhere higher up.
+
+```
+// Make an axis
+var axis = d3.svg.axis()
+    .scale(xScale);
+```
+
+But you want the axis to be below the plot. So create a new group:
+
+```
+var width = 500;
+var height = 500;
+
+var widthScale = d3.scale.linear() // other choices include log
+    	       	  .domain([min, max])
+		  .range([0, width]);
+
+var colourScale = d3.scale.linear()
+    		  .domain([0,60])
+		  .range(["red", "blue"])
+
+var xAxis = d3.svg.axis()
+    	    .scale(widthScale)
+	    .ticks(5); // Specify the default number of ticks.
+
+var canvas = d3.select(".chart")
+    	      .append("svg")
+	      .attr("width", width)
+	      .attr("height", height);
+	      .append("g")
+	      .attr("transform", "translate(20, 0)");
+
+var bars = canvas.selectAll("rect")
+            .data(dataArray)
+	    .enter()
+	        .append("rect")
+		.attr("width", function (d) {return widthScale(d.x);})
+		.attr("height", 50);
+		.attr("y", function(d, i) {return i * 100;})
+		.attr("color", function(d) { return colourScale(d.y); })
+canvas.append("g")
+	.attr("transform", "translate(0, 400)")
+	.call(axis);
+```

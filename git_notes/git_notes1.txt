@@ -1,0 +1,489 @@
+Notes from the git Real course on Code School
+
+#
+# Basics:
+
+Version control system - tries to merge the changes.
+You can also see the history.
+git is distributed, so everybody had a complete version of the repo.
+
+git help gives a list of commands
+
+also git help `command`
+
+To makes a local git repo:
+
+`git init`
+
+Add to staging area 
+
+Commit - take snapshots on stage
+
+`git status` says difference since last commit.
+
+`git add file`
+`git commit -m "Message"
+
+`git status` again would say there is nothing else new in branch, also which branch you are on.
+
+Can add both files by listing one after the other, also:
+
+`git add --all` adds all new or modified files.
+`git commit -m "another message"`
+
+Write commit messages in the present tense.
+
+Other options for `git add`:
+
+`git add *.txt` wildcards work.
+
+`git add directory/` - everything in that directory
+
+`git add "*.txt"` - adds ALL the text files in the whole project.
+
+`git log` for a log of previous commits.
+
+#
+# Staging and remotes:
+
+`git diff` - what was the change you made that are unstaged since the last commit.
+
+But if you add the file, then to get the changes, you need to run:
+
+`git diff --staged` (includes staged files)
+
+What if we staged things we didn't want to?
+
+`git reset HEAD <file>` HEAD means the last commit on the current branch.
+
+So you can reset an individual file.
+
+What if you want to go back to the old version of the file?
+
+`git checkout -- FILENAME`
+
+If you have files already being tracked, you can add and commit then in one command:
+
+`git commit -a -m "Message"` - the `-a` just means all tracked files. (It won't add new files, though).
+
+Undo a commit:
+
+`git reset --soft HEAD^` -- move all of the stuff from the last commit back into staging.
+
+`HEAD^` means move to the commit one before the current commit.
+
+If you missed a file from the last commit:
+
+`git add FILENAME`
+`git commit --amend -m "Add file to previous commit"`
+
+This means a new file is included in the old commit!
+
+`git reset --hard HEAD^` undoes the last commit, and all of the changes that were staged for that commit.
+
+`git reset --hard HEAD^^` (extra carrot means an extra commit to undo)
+
+# Sharing with other people:
+
+Add a remote:
+
+`git remote add origin URL_TO_REPOSITORY.git`
+
+To list all remotes that are locally know:
+
+`git remote -v`
+
+To push to the remote repository:
+
+`git push -u REPO_NAME LOCAL_BRANCH_TO_PUSH` (-u means you don't have to specify branch to push)
+
+To get changes to git repo:
+
+`git pull`
+
+To remove remote:
+
+`git remote rm REPO_NAME`
+
+Don't try to roll back commits after they have been pushed to the remote.
+
+#
+# Cloning and branching:
+
+Cloning a repo into your local repository:
+
+`git clone URL_TO_REPO.git` The name of the repo will be the last bit that is `blah.git` so `blah`. You can rename it when cloning it:
+
+`git clone URL_TO_REPO.git NEW_LOCAL_NAME`
+
+Clone downloads the repo into a git-real directory.
+It then adds an origin reference, which is pointed at the URL.
+It then checks out the initial branch (probably master) and sets the head.
+
+To work on a feature it is best to create a branch.
+
+`git branch BRANCH_NAME`
+
+But this leaves you in the master branch, so switch branch:
+
+`git checkout BRANCH_NAME`
+
+So make a new file, add and commit it:
+
+`git add FILE`
+`git commit -n "Message"`
+
+Added to the new branch, not the master.
+
+Move back to master:
+
+`git checkout master`
+
+The FILE will not be on the master branch.
+
+Now we want to merge the new branch into the old one:
+
+`git merge BRANCH_NAME`
+
+This puts the new changes from the new branch into the old one.
+
+"Fast-forward" maybe the message you get. What that means is that since branching off the master, there have been no changes to the master branch, so it's super easy to merge the changes into the old branch from the new one.
+
+So now delete the branch as it's now merged into the master branch:
+
+`git branch -d BRANCH_NAME`
+
+Short cut:
+
+`git checkout -b NEW_BRANCH` --> Makes new branch and moves to it automatically.
+
+But if something happens to the master branch between branching off it and wanting to merge it.
+
+It gives you a vi editor in the command line, giving you an option to add a merge message.
+
+Git then tries to do a recursive merge.
+
+#
+# Collaboration basics:
+
+Local version of file different from original and the new version on remote. The remote version is also changed.
+
+You get rejected.
+
+Easy way to try and fix is to pull then push.
+
+First step, the `git pull`: fetches (syncs) local repository with the remote one.
+
+The first step is the same as doing a `git fetch`.
+
+It doesn't update the local code.
+
+Locally there are two branches, master and origin/master.
+Initially it is origin/master that is updated.
+The next step is to merge origin/master into master
+(So like being checked into master and running: `git merge origin/master`)
+Then it pops up the editor, making you do a merge commit (with message)
+Then you get some output, saying recursive merge.
+The origin/master still doesn't know about the merge, until you then try to push.
+
+So then you run `git push`.
+
+You can avoid merge commits with a rebase.
+
+Now, what happens if instead of working on different files from the same repo, you are working on the same file?
+
+The first person commits and pushes. Then the second person does a pull.
+git first syncs the repository with origin/master, then tries to merge into the local version.
+The merge isn't successful, and you have a conflict.
+
+If you run:
+
+`git status` it will show you which files need to be edited before making a merge commit.
+
+Inside the file with the conflict you will get some code:
+
+```
+<<<<<<< HEAD
+Your local version of the line
+=======
+The version you just pulled
+>>>>>>>
+the reference for the commit that provided this conflicting code
+```
+
+Manually you must edit it. Remove the arrows, then delete the version you don't want.
+
+Then commit:
+
+`git commit -a` (leave off the message, because it will bring up the vi editor).
+
+Then push again.
+
+So the full process isL
+
+```
+git push # You get rejected
+git pull # Tries to merge, tells you about conflicts
+git status # if you want to check conflicts
+# edit the conflicts
+git commit -a # giving a message in the editor
+git push # send it back to the repo
+```
+
+#
+# Remote branches and tags:
+
+If you are working on a branch that lasts longer than a day, probably back it up with a local branch.
+
+To fetch new remote branches:
+
+`git fetch`
+
+Possibly to also get a remote branch, create locally:
+
+`git checkout -b branch_name`
+
+And push to remote:
+
+`git push origin branch_name`
+
+Then you can work on, add, commit and push to it remotely.
+
+Next time someone else pulls, they will probably see the remote banches. To list all remote branches:
+
+`git branch -r`
+
+If you then:
+
+`git checkout remote_branch_name_you_dont_have`
+
+it should be set up to automatically track the remote version, so you can pull and push etc.
+
+`git remote show origin` shows where the remote branches are from. It shows remote branches which are tracked or not, local branches that they get pulled to, and where the local branches push to remotely.
+
+It even shows if local branches are out of date.
+
+To to delete remote branches:
+
+`git push origin :branch_name` (deletes only the remote branch)
+Then try to delete local branch:
+`git branch -d branch_name`
+
+If there are commits that haven't been merged, then it will warn you and not delete. (Also you can't delete the branch you are currently in).
+
+To DEFINITELY delete the branch, use a capital D:
+
+`git branch -D branch_name`
+
+But, let's say user1 created the remote branch, which user2 deleted. When user1 tries to push to remote. If you use `git push` it just says it is up to date, because there is nothing to push to. You are up to date with the local branch. To figure out what's going on, try:
+
+`git remote show origin`, and it will say it is `stale`. `stale` means it is no longer remote.
+
+To clean it up, you want to run:
+
+`git remote prune origin` to remove all stale references. (Presumably running `git status` returns that those branches are now untracked.)
+
+Tags are a reference to a specific commit. (You can jump back to code). Often used for release versioning.
+
+To list all tags:
+
+`git tag`
+
+To use the code from the previous commits, you can do:
+
+`git checkout old_tag_name`
+
+To add a new tag:
+
+`git tag -a tag_name -m "Commit message for tag, which is probably v0.0.3"
+
+Then push the tag:
+
+`git push --tags`
+
+
+#
+# Rebase:
+
+Merge commits can be considered bad.
+
+It looks like the history gets polluted.
+
+So when you try to push, get rejected because remote code is different to when you pulled, instead of doing the pull and push routine, you do a fetch and rebase:
+
+`git fetch` - pulls all changes and doesn't merge them with your local branches.
+`git rebase`: does 3 things:
+
+1) Finds all changes that are in the local version, but not the remote, and move them to a temporary area.
+2) Run all the origin/repo commits one at a time on the local repo.
+3) Run all the commits in the temporary area, one at a time, on the new repo, containing the origin/repo commits. (So the changes from local happen second)
+
+Local branch rebase:
+
+`git checkout branch_name`
+`git rebase what_you_branched_from` (so put the commits from the thing you branched from in to the new branch)
+`git checkout what_you_branched_from`
+`git merge branch_name` will do a fast forward merge (so no merge conflicts).
+
+Some conflicts may happen. This is when you modify the same file on two different branches.
+
+To solve this:
+
+`git fetch` (get origin/repo)
+`git rebase` (put local commits from repo into temporary area, run origin/repo, then temporary area commits, one at a time)
+
+You get a message saying there is a merge conflict, that you should fix it, and then run:
+
+`git add FILENAME_OF_CONFLICTED_FILE`
+`git rebase --continue`
+
+If you want to skip the patch:
+
+`git rebase --skip` (ignores the merge conflict)
+
+Or undo the process of the rebase so far:
+
+`git rebase --abort`
+
+Running `git status` in the middle of the rebase tells you that you aren't on any branch!
+
+If you are dealing with a branch that is old and has a lot of changes, then perhaps merge is the way to go - you can see everything that happened, and you have a log of it all.
+
+#
+# History and configuration
+
+`git log`: Usually for each commit shows:
+
+SHA hash, user, date and commit message.
+
+The log output isn't great to read. You can make your git configuration more coloured:
+
+`git config --global color.ui true`
+
+You can also format the log output:
+
+`git log --pretty=oneline`
+
+Will display each commit in one line, with the SHA hash and the commit message.
+
+Or make it better still with
+
+`git log --pretty=format: "%h %ad- %s [%an]"`
+
+%ad - author date
+%an - author name
+%h - SHA hash
+%s - subject
+%d - ref names
+
+(there are more options)
+
+To see what each commit changed (patch output):
+
+`git log --oneline -p`
+
+Will output the SHA hash and commit message in one line, then tell you the file altered and show what was there and what replaces it.
+
+`git log --oneline --stat`
+
+Shows you the SHA hash and commit message in one line, then the number of insertions and deletions in each file for each commit.
+
+`git log --oneline --graph`
+
+Again the one line SHA hash and message, but also a visual representation of the commits:
+
+* SHA hash 4 message4
+|\
+| * SHA hash 3 message3
+* | SHA hash 2 message2
+|/
+* SHA hash 1 message1
+
+You can also specify a date range:
+
+`git log --until=1.minute.ago`
+`git log --since=1.data.ago`
+`git log --since=1.hour.ago`
+`git log --since=1.month.ago --until=2.weeks.ago`
+`git log --since=2000-01-01 --until=2012-12-21`
+
+Also remember `git diff`
+
+`git log -p` gives a log of the differences with the patches shown.
+
+`git diff HEAD` does the same as `git diff`, but compares current state to previous commits:
+`git diff HEAD` (latest commit)
+`git diff HEAD^` (parent of latest commit - the one before)
+`git diff HEAD^^` (grandparent of latest commit - two before)
+`git diff HEAD~5` (five commits before)
+`git diff HEAD^..HEAD` (compare second most recent to most recent)
+
+You can also compare two commits specifically using the SHA hashes:
+
+`git diff SHAHASH1..SHAHASH2`
+
+SHA hashes are sometimes abbreviated - can use the abbreviated forms in `git diff`
+
+Also can run `git diff` on two branches:
+
+`git diff branch1 branch2`
+
+You can also use time ranges for `git diff` exactly the same way as shown for `git log`.
+
+`git blame index.html --date short`
+
+Will show the commit history for that file, with the user, date and changes that were made to the file.
+
+You can exclude files that you don't want to track or share:
+
+But the file name in `.git/info/exclude`
+
+You can use patterns inside that file, like wild card and directories.
+
+No one should include log files in the remote repo - they will always change for all users.
+
+So don't commit them.
+
+Inside `.gitignore` place: `logs/*log`
+
+Removing files from repos:
+
+`git rm FILE_OR_FOLDER` - this is a change that then gets added to the stage, so you need to commit that change straight after, with `git commit -m "Deleted FILENAME"`
+
+To stop tracking files:
+
+`git rm --cached NAME_OF_FILE_PROBABLY_A_LOG`
+
+You then should make sure log files are being ignored, and then commit.
+
+#
+# Configuration options:
+
+You can set several configuration options, beyond username and email:
+
+`git config --global core.editor emacs` (set the text editor for interative commits)
+`git config --global merge.tool opendiff`
+
+You can also set an email address for a specific repo:
+
+`git config user.email "email@domain.com"` (difference is no `--global` flag)
+
+Aliases:
+
+You can set aliases for log formatting strings:
+
+`git config --global alias.mylog \
+"log --pretty=format: '%h %s [%an]' --graph"`
+
+Another option that is popular is:
+
+`git config --global alias.lol \
+"log --graph --decorate --pretty=oneline --abbrev-commit --all"`
+
+You can also alias basic commands:
+
+`git config --global alias.st status` (typing `git st` does a `git status`)
+
+#
+# Wrap up video:
+
