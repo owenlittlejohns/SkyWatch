@@ -86,4 +86,4 @@
 
 * `git config --global color.ui true` (make user interface coloured)
 * `git config --global core.editor emacs` (make emacs the text editor for merge conflicts, etc)
-* `git config --global alias.st "status"` (create an alias of `git st` for `git status`
+* `git config --global alias.st "status"` (create an alias of `git st` for `git status`)
