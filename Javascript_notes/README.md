@@ -1,9 +1,8 @@
-# Notes taken on learning Javascript (mainly from Code School course)
+# Notes taken on learning Javascript (mainly from Code School course) #
 
 JavaScript indentations are 2 characters.
 
-#
-# JavaScript_notes.txt
+## JavaScript_notes.txt ##
 
 Notes on the Code School initial Javascript tutorials. This so far includes:
 
@@ -12,8 +11,7 @@ Notes on the Code School initial Javascript tutorials. This so far includes:
 * Variables: declaration, changing, operators, incrementing
 * Files: calling from HTML, syntax, printing to JavaScript console.
 
-#
-# JavaScript_notes2.txt
+## JavaScript_notes2.txt ##
 
 Notes on the second Code School JavaScript course, including:
 
@@ -28,8 +26,7 @@ Notes on the second Code School JavaScript course, including:
 * Global and local scope.
 * Arrays.
 
-#
-# JavaScript_notes3.txt
+## JavaScript_notes3.txt ##
 
 * Function expressions, anonymous functions.
 * `map()`.
