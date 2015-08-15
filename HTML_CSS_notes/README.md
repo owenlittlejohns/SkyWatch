@@ -1,7 +1,6 @@
-# Notes on HTML/CSS courses from Code School
+# Notes on HTML/CSS courses from Code School #
 
-#
-# HTML_CSS_notes.txt
+## HTML_CSS_notes.txt ##
 
 Notes from "Front-end foundations" course, including:
 
