@@ -1,17 +1,15 @@
-# Notes on learning D3 (and related Javascript)
+# Notes on learning D3 (and related Javascript) #
 
 Subdirectory containing examples of annotated code and notes on using D3.
 
-#
-# d3_example1.html:
+## d3_example1.html: ##
 
 An HTML page containing the basic structure to have:
 
 * CSS imported from `main.css` and `plot.css`.
 * Plotting JavaScript imported from `d3_example1.js`.
 
-#
-# d3_example.js
+## d3_example.js ##
 
 A JavaScript file containing the script to produce the displayed figure. This figure currently contains:
 
@@ -21,27 +19,26 @@ A JavaScript file containing the script to produce the displayed figure. This fi
 * x and y data points.
 * A line interpolated between the points (`cardinal` to make it smoother).
 * Changing colour of points on mouse hover (and changing back when not).
+* Multiple data sets.
 
 Remaining changes:
 
 * A tooltip containing text on mouse hover.
-* Multiple data sets.
+
 * Buttons to control multiple data sets:
 * Clicking on the buttons toggles data sets on and off.
 * Buttons above the plot area that upon a mouse hover:
-** Make other data sets fade.
-** Makes specific dataset thicker.
-** Plot other lines (temporarily).
-** Bring up a legend (with a position dependent on whether there are data in the top right corner).
+ * Make other data sets fade.
+ * Makes specific dataset thicker.
+ * Plot other lines (temporarily).
+ * Bring up a legend (with a position dependent on whether there are data in the top right corner).
 
 
-#
-# main.css:
+## main.css: ##
 
 A file containing CSS styling for standard HTML tags, such as `<p>` and `<h1>`.
 
-#
-# plot.css:
+## plot.css: ##
 
 A file containing CSS styling specifically for the d3 plot object.
 
