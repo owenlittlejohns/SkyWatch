@@ -483,7 +483,3 @@ Another option that is popular is:
 You can also alias basic commands:
 
 `git config --global alias.st status` (typing `git st` does a `git status`)
-
-#
-# Wrap up video:
-
