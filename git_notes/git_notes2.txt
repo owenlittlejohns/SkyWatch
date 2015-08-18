@@ -1,0 +1,442 @@
+# Notes on the Code School course git 2: #
+
+#
+# Interactive rebase:
+
+Technically, once you apply a rebase, you aren't putting the commits from the master branch on to the new branch. You are moving the new branch to be in sync with the old one, then applying the new commits.
+
+Altering commits in the SAME branch?
+
+`git rebase -i old_branch` (old branch can also be the same branch but a few commits ago - i.e. `HEAD~3`)
+
+The `-i` runs the rebase in interactive mode. It pops up a text editor.
+
+You basically have a series of commands in this editor that are run. For example:
+
+`pick SHAHASH "message"`
+
+Pick means you want to execute the commit when you close the editor.
+
+You save and exit the editor. Then it moves the commits into the temporary area.. Each commit that you `pick` will be applied.
+
+If you run the rebase on the `HEAD` the editor will pop up saying `noop` because `HEAD` is the current commit.
+
+You can use the interactive rebase to switch the order of the commits.
+
+Inside the editor remember the rebase window goes oldest to newest, so just put the commits in the order you want inside the editor (older at the top).
+
+You can also change the rebase message. Instead of `pick` use `reword` and change the message.
+
+So:
+
+`pick SHAHASH Old wrong message`
+
+becomes:
+
+`reword SHAHASH Old wrong message`
+
+You then save and exit, and a new editor pops up allowing you to change the commit message in the editor.
+
+You can also split a single commit into two separate commits.
+
+Inside the rebase commit, change the `pick` command to `edit`:
+
+`edit SHAHASH message`
+
+Save and exit. When you get to the commit you want to edit, it will give you the option to `git commit --amend` or `git rebase --continue` (the latter must always be run once your changes are applied).
+
+To sort out the commit, first you:
+
+`git reset HEAD^` - reset to the previous commit (in the rebase) changes are now in the working directory.
+`git add FILES_FOR_FIRST_COMMIT`
+`git commit -m "First commit message`
+`git add FILES_FOR_SECOND_COMMIT`
+`git commit -m "Second commit message`
+`git rebase --continue` (finish off the rebase)
+
+What about making several commits into a single commit?
+
+Inside the interactive rebase editor, find the commits you want to squash into the previous commit:
+
+```
+pick SHAHASH message 1
+pick SHAHASH message 2
+pick SHAHASH message 3
+squash SHAHASH message 4
+```
+
+So the fourth commit gets included into the third. Save and exit. Then you get a new editor with the commit messages for the two (or more commits that are being squashed together).
+
+Delete the old messages and write a new message for the combined commit.
+
+#
+# git stash
+
+When you are part way through a commit, but you need to swap branches without committing your current changes.
+
+stashing stores the files in a temporary area.
+
+`git stash save "message for stash"` saves the files to the temporary area, and restores the state from the last commit.
+
+Then you can checkout the other branch and do all the stuff you need to there.
+
+Then you checkout the original branch again. To bring back the stashed changes:
+
+`git stash apply`
+
+Every time you run `git stash save` it pushes the changes on to a stash stack. If you run `git stash list` you can see all the previously saved stashes. (There can be multiple). It will say `WIP` as in WORK IN PROGRESS. It will also tell you the branch and the previous commit before the stash.
+
+Each stash also is given a name so you can select it to apply:
+
+`stash@{0}` for example. So to apply this stash, you would:
+
+`git stash apply stash@{0}`
+
+`stash@{0}` is the one applied by default - the most recent.
+
+When you apply the stash, the stash isn't popped from the stash stack. So later you need to remove it.
+
+`git stash drop stash@{0}`
+
+`git stash` is the same as running `git stash save`
+`git stash pop` is the the same as running separate `git stash apply` and `git stash drop` commands.
+
+You can have stash conflicts. Like merge conflicts. What happens is git pops up a message saying it won't work, and then doesn't apply the stash.
+
+You either have to roll back your changes:
+
+`git reset --hard HEAD`
+
+or commit your changes.
+
+Then redo the `git stash apply`
+
+If you pop the stash, and it can't remember it won't pop the stash from the stack, because you may need to do a hard reset and then retry.
+
+So remember that if you want to drop it, you have to manually drop it.
+
+What if you stash more than you want to (you want to commit some stuff (already added, but not committed, and stash the rest, but stash it all first by mistake)
+
+Just restore using `git stash pop`
+
+then:
+
+`git stash save --keep-index` (won't stash the staging area, only unstaged changes).`
+
+Then run the commit you want.
+
+By default, untracked files are not saved to the stash. To include them, you need:
+
+`git stash save --include-untracked` then `git stash pop` will work as you want.
+
+If you have a lot of stashes in your list, it becomes tricky to tell them apart.
+
+You can run instead (same options as `git log` command):
+
+`git stash list --stat` giving the summary of the changes
+`git stash show stash@{0}` will show one particular stash. (Again the default without a named stash is to show the most recent thing in the stack.)
+
+`git stash show` can also take any option that the `git log` command can take.
+
+What if you stash a branch, then accidentally delete it?
+
+`git stash branch BRANCH_NAME stash@{0}` this checks out a new branch, pops the stash and drops it automatically.
+
+Then the new branch is ready for new commits.
+
+If you have a load of you no longer want, you can run:
+
+`git stash clear` - it empties the whole stash stack.
+
+#
+# Purging history:
+
+For example committing a file with password data into it.
+But if you delete files, git has a history of all the files.
+
+BE CAREFUL IF THINKING ABOUT PURGING!
+
+In this instance, change password.
+Everyone must update their work to account for purge.
+
+But perhaps you should do it if you have accidentally violated copyright.
+Or put large files that fill up your repo too much.
+Also, it's much more okay to do if the commits are only local.
+
+First thing to do is create a backup.
+
+`git clone repo_foldername foldername_of_clone`
+
+The use tree filter:
+
+`git filter-branch --tree-filter 'shell command'`
+
+Inside this you specify any shell command you want to run.
+So git checks out each commit into a working directory, runs that command and then recommits.
+
+For example:
+
+`git filter-branch --tree-filter 'rm -f passwords.txt' -- --all`
+
+(The `-- --all` runs the command on all of the commits on all of the branches)
+
+Remove all files with mp4 extension:
+
+`git filter-branch 'find . -name "*.mp4" -exec rm {} \;' -- --HEAD`
+
+Would do it only on the current branch (HEAD).
+
+If you don't use the `-f` flag on the `rm` command, those commits without the file you are trying to remove will fail to remove that file. Then the whole filter fails.
+
+This is a slow thing to do with a lot of previous commits.
+
+Instead try using an index-filter:
+
+`git filter-branch --index-filter 'GIT COMMAND'`
+
+Git will run the command on every commit, but operates on the staging area. This is much quicker, as it doesn't checkout every file. But the command must be a git command. So in the file removal example:
+
+`git filter-branch --index-filter 'git rm --cached --ignore-unmatch passwords.txt'` (so removes from the staging area, then commits.)
+
+The `ignore-unmatch` is the equivalent of `-f`. If the file isn't there, the thing will carry on going.
+
+If you try to run the `git filter-branch` a second time, it may not work. That's because you get a backup of your tree in the `.git` directory. By default, git will not overwrite this backup. To make it do so:
+
+`git filter-branch -f .......`
+
+When you delete stuff, some commits might end up empty. So you need to prune them.
+
+`git filter-branch -f --prune-empty -- --all` This will drop commits with no changes. You can also do the pruning during the initial `--tree-filter` command.
+
+#
+# Working together:
+
+Different operating systems use different line separators. (OSX/Linux = LineFeed`\n`, Windows = Carriage Return and LineFeed pair `\r\n`).
+
+So this is a problem when running Linux code in Windows.
+
+You can set a default option, so it automatically ensures there is the carriage return, too:
+
+On Unix:
+
+`git config --global core.autocrlf input`
+
+On Windows:
+
+`git config --global core.autocrlf true` - if you checkout a file it will make all linefeeds into CRLF, but when you push up, it just makes them LF again.
+
+To ensure you don't rely on others doing this, create a `/gitattributes file` in the project root:
+ 
+```
+*   text=auto
+
+*.html  text
+*.css   text
+
+*.bat   text eol=crlf
+*.sh    text eol=lf
+
+*.jpg   binary
+```
+
+The first line is the text line end conversion.
+
+On the left is file type. The star is a wildcard. On the right are the conversion settings, specifying what to do - and as text=auto it should convert it properly.
+
+If it says text, it will be treated as text.
+
+Binary means do not try to do conversion:
+
+Some typical rules:
+
+The `*.sh` and `*.bat` are Linux and Windows specific, respectively.
+
+#
+# Cherry picking:
+
+Say you have some stuff in one branch and want some code from another. Burt that piece of code is a commit in the middle of some other commits. You only want to transfer that single commit into your production branch.
+
+First:
+
+`git checkout BRANCH_YOU_WANT_TO_PUT_CODE_IN`
+`git cherry-pick SHAHASH_FOR_COMMIT_YOU_WANT`
+
+The new version of the commit on the new branch has a new SHA hash, because it has a new parent, you may want a new commit message after the cherry pick:
+
+`git cherry-pick --edit SHAHASH`
+
+This will get you an editor where you can make the new commit message.
+
+What if you want to cherry-pick several commits from one branch and add them as a single commit on another?
+
+`git cherry-pick --no-commit SHAHASH1 SHAHASH2 ...`
+
+These commits are obtained, applied to the HEAD, staged, but not committed. So you then commit yourself.
+
+This is really useful if you want to make your own minor changes to the commits anyway.
+
+To keep track of where the cherry-pick is from:
+
+`git cherry-pick -x SHAHASH`
+
+This adds extra text to the commit message including that it was a cherry-pick and where from. This is only useful for cherry-picking from public branches.
+
+You can also keep track of who did the cherry-picking, rather than just who made the changes in the cherry-picked commit:
+
+`git cherry-pick --signoff SHAHASH`
+
+#
+# Submodules:
+
+If you have code libraries that you want to share.
+
+Some bad ways:
+
+Copy libraries into each project (bad because you can't share changes and the library quickly gets outdated - you don't remember to add new changes to the libraries when other people make them)
+Post libraries on a central server (can't make changes without a project to test it in)
+
+Instead use git submodules. It's a git repo in a repo. The repo is independant of the container.
+
+So create new repo as you would any other, so if on git hub, make it there.
+
+Then go into the repo and specify what you want to add into it:
+
+`git submodule add git@example.com:blah.git`
+
+This is made into a `blah` repo inside the root of your repo. I think `blah` needs to be the name of a folder you might already have with the stuff in it. It the adds a `.gitmodules` file which has the configuration for the submodules.
+
+There is also a new file (which is a directory) which is `blah` and the directory that is the submodule itself.
+
+Then all you do is:
+
+`git add --all`
+`git commit -m "Add submodule"`
+`git push`
+
+To make updates in the submodule:
+
+Checkout the master branch of the submodule (by default they don't start on a branch):
+
+`git checkout master`
+
+Then change files, then add and commit:
+
+`git commit -am "update stuff"`
+
+then push:
+
+`git push`
+
+You also need to push the parent repo, now, though:
+
+`cd ..`
+`git add css`
+`git commit -m "Update stuff"`
+`git push`
+
+The parent needs to be updated, because you need to be pointing to the HEAD of the new module.
+
+If you are a person adding a new repo with submodules in it:
+
+Clone the whole big project as usual:
+
+`git clone git@example.com:project.git`
+
+You get all the files, directories, but the submodule directories are empty and need initialising:
+
+So:
+
+`git submodule init`
+`git submodule update` (this goes and pulls the submodules)
+
+Then you make changes to the submodules and commit and push.
+
+The next time you pull the whole repo you will see that the submodule has changed, so you need to update the submodules again:
+
+`git submodule update`
+
+If you forget to specify the branch (you must always specify the branch -as each time you check out you aren't on a branch), you can end up with commits being made, but not on a branch.
+
+To fix:
+
+`git checkout BRANCH_YOU_WANT_COMMIT_ON`
+`git merge SHAHASH of orphan commit`
+
+(alterative to above: create a new branch and attach commit: `git branch NEW_BRANCH SHAHASH`)
+`cd ..`
+`git add css`
+`git commit -m "Commit the submodule stuff"`
+`git push`
+
+YOU MUST PUSH BOTH THE SUBMODULE AND THE PARENT
+
+To make sure you haven't forgotten, when pushing the parent:
+
+`git push --recurse-submodules=check` will abort if you haven't pushed the submodule.
+
+Or just run the push in the parent:
+
+`git push --recurse-submodules=on-demand`
+
+This will do the pushing for the submodules for you.
+
+A good idea is to alias the `on-demand` command as `pushall` or something, so you can just do it easily.
+
+`git config alias.pushall 'push --recurse-submodules=on-demand'`
+
+#
+# Reflog:
+
+So you want to go back to a previous commit:
+
+`git reset --hard SHAHASH`
+
+But that was a mistake. But how to get the old commit?
+
+The commit isn't in the log, but there is a local repo second log, called reflog.
+
+`git reflog` will also show all old commits that are "deleted" and the reset commands.
+
+Keep note of the hash you want.
+
+Every time the head moves from commit, merging or reset, there is an entry in the reflog. HEAD@{0} is always the current commit.
+
+To get the old commit you though you had got rid off, try:
+
+`git reset --hard SHAHASH`
+
+or:
+
+`git reset --hard HEAD@{1}`
+
+Reflog is ONLY LOCAL!
+
+Deleting branches:
+
+If you `git branch -D aviary` which completely blows it away. But then you want it:
+
+You need to find the latest commit from that deleted branch and add it to a different branch.
+
+You need the reflog - perhaps with more details:
+
+`git log --walk-reflogs`
+
+Get the short name of the SHA hash, then:
+
+`git branch NEW_BRANCH SHAHASH_DELETED_BRANCH`
+
+It will be like the old branch was never gone, because it will also restore all the old commits on that branch.
+
+#
+# Extra resources:
+
+git-scm.com - including pro git book download.
+
+help.github.com
+gitmersion.com - lots of stuff
+gitready.com
+Git Cheatsheet - gives where things move from and to.
+Git from the bottom up - book with the internal information (of Git Internals)
+nvie.com - git branching models.
+
+DevTools course (maybe).
