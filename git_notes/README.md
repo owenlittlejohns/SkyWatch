@@ -87,3 +87,68 @@
 * `git config --global color.ui true` (make user interface coloured)
 * `git config --global core.editor emacs` (make emacs the text editor for merge conflicts, etc)
 * `git config --global alias.st "status"` (create an alias of `git st` for `git status`)
+
+## git_notes2.txt - notes on git 2 course: ##
+
+* `git rebase -i BRANCH` (interactive rebase, including `pick`, `edit` and `squash`)
+*`git stash save "save message"` (save a stash without committing, so you can checkout another branch)
+* `git stash apply stash@{0}` (apply stash of that name to current branch)
+* `git stash drop stash@{0}` (drop stash of that name from the stash stack)
+* `git stash pop stash@{0}` (pop that stash into current working branch)
+* `git stash save --keep-index` (only stash unstaged files - not added ones)
+* `git stash save --include-untracked` (include untracked files)
+* `git stash save --keep-index --include-untracked` (do both of above)
+* You can run the commit you want after the `git stash save --keep-index`
+* With a stash conflict: `git reset --hard HEAD` and then reapply stash
+* `git stash list --stat` (give summary of the changes in the stash)
+* `git stash show stash@{0}` (show details on that specific stash)
+* `git stash branch BRANCH_NAME stash@{0}` (create a new branch, apply stash, drop stash)
+* `git stash clear` (empty the stash stack).
+
+#### Purging history: ####
+
+* `git clone repo_name copy_name` (back up the repo first)
+* `git filter-branch --tree-filter 'shell command'` (Go through every commit and apply the shell command - this is slower. `rm -f` so it doesn't fail)
+* `git filter-branch --index-filter 'git command including --ignore-unmatch'` (Only looks at staged files, so quicker)
+* Second `filter-branch` requires `-f`
+* `git filter-branch -f --prune-empty -- --all` (delete all empty commits)
+
+#### Cherry-picking: ####
+
+* `git checkout BRANCH_YOU_WANT_CODE_IN` (step 1 get on branch)
+* `git cherry-pick SHAHASH_FOR_COMMIT_YOU_WANT` (step 2 grab commit from other branch)
+* `git cherry-pick --edit SHAHASH` (edit commit message)
+* `git cherry-pick --no-commit SHAHASH1 SHAHASH2` (stage but do not commit the commits, so you can combine into a single one yourself)
+* `git cherry-pick -x SHAHASH` (keep reference to where commit is from)
+* `git cherry-pick --signoff SHAHASH` (keep reference of who cherry-picked the commit)
+
+#### Submodules: ####
+
+* To make a submodule:
+ * `git submodule add git@example.com:submodule_name.git` (add submodule directory if making it)
+ * `git add --all` (stage stuff in submodule you want to add)
+ * `git commit -m "Add submodule stuff"`
+ * `git push` (now submodule is remotely available)
+ * `cd ..` (go to parent repo)
+ * `git add submodule_name`
+ * `git commit -m "Update parent commit too)
+ * `git push`
+* Obtaining a submodule:
+ * `git clone git@example.com:project.git` (clone whole project)
+ * `git submodule init` (make submodule directories)
+ * `git submodule update` (pull down submodule contents)
+ * `git checkout BRANCH` (by default submodules start you on no branch)
+* If you forget to checkout a branch for the submodule, and commit, it becomes and orphan. To fix:
+ * `git checkout BRANCH_YOU_WANT_COMMIT_ON`
+ * `git merge SHAHASH_OF_ORPHAN_COMMIT`
+* `git push --recurse-submodules=check` (check no submodules have been forgotten when pushing parent)
+* `git push --recurse-submodules=on-demand` (force submodules to be pushed if forgotten)
+
+#### Reflog: ####
+
+* Reflog contains everything, including deletes and deleted commits.
+* `git reflog` or more detailed `git log --walk-reflogs`
+* For deleted commit, get SHA hash, then:
+ * `git reset --hard SHAHASH`
+* For deleted branch:
+ * `git branch NEW_BRANCH_NAME SHAHASH_DELETED_BRANCH_LAST_COMMIT`
