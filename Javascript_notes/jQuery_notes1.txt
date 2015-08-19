@@ -1,0 +1,539 @@
+# Notes on the Try jQuery course on Code School: #
+
+## Introduction: ##
+
+jQuery makes it easy to:
+
+find elements in HTML document
+change HMTL content
+listen to what a user does and react accordingly
+animate content on a page
+talk over the network to get new content
+
+For example to modify an <h1> element you need to FIND it and then EDIT it.
+
+The browser organises the HTML it receives using the Document Object Model (DOM) which is a tree like structure. When you go to a URL, the HTML is loaded piece by piece into the DOM, making nodes in the DOM.
+
+HTML is a child of the document node.
+
+Node types include element and text.
+
+JavaScript is used to interact with the DOM.
+
+The browser requests the HTML, which is passed back with required other files, including JavaScript. But each browser has a slightly different DOM interface, but jQuery can interact with all of them.
+
+Inside the JavaScript you have a call to jQuery:
+
+`jQuery(document);`
+
+1) Find it:
+
+Use CSS selectors to find elements:
+
+`jQuery("h1");`
+
+or `jQuery("p");`
+
+Or more simply:
+
+`$("h1");`
+
+2) Modify it:
+
+To get the text in the `<h1>` tag use the `text()` method of jQuery:
+
+`var h1Text = $("h1").text();`
+
+To modify it:
+
+`$("h1").text("new text");`
+
+The JavaScript might be loaded before the HTML you are looking for is loaded into the DOM, and so it won't work. You must make sure the DOM has finished loading first.
+
+When the DOM has finished loading, it triggers an event say it is ready. So only run code when the ready event has happened:
+
+```
+jQuery(document).ready(function() {
+  $("h1").text("new string!")
+});
+```
+
+## Using jQuery: ##
+
+Download it from the jQuery pages, then load it into HTML:
+
+`<script src="jquery.min.js"></script>`
+
+Then to start using it, create another JavaScript file, inside that you can write the jQuery.
+
+You can also change multiple elements in the DOM:
+
+So all `<li>` tags:
+
+```
+$("li"); // Returns a jQuery object of all the <li> tags
+```
+
+To change all of their text to one value:
+
+`$("li").text("new text");`
+
+If you want to only select a few, use different selectors and specify the ID or class:
+
+HTML:
+
+```
+<ul id="destinations">
+  <li>blah</li>
+</ul>
+```
+
+JavaScript:
+
+`$("#container");`
+
+Or:
+
+```
+<ul id="destinations">
+  <li class="promo">blah</li>
+</ul>
+```
+and
+
+`$(".promo");`
+
+To select multiple classes at once:
+
+`$(".class1, .class2")` (I think)
+
+## Searching the DOM: ##
+
+Previously we were selecting a whole unordered list using the CSS ID. This time we want to get all the `<li>` tags inside that `<ul>` tag - we use the descendents selector:
+
+```$("#destinations li");`
+
+What if there is (for example) an unordered list, inside the unordered list, and you only want the children of the first list (not the children of the second). The descendent selector would select all children inside the unordered list, not just the direct children.
+
+Instead use the child selector:
+
+`$("#destination > li");`
+
+What about multiple elements, ie a specific class and a specific other ID:
+
+`$("selector1, selector2")`
+
+Or how about first item in the unordered list:
+
+`$("#destinations li:first");`
+
+Or the last is the same syntax, but `li:last`
+
+Or every other use the `li:odd` or `li:even` (it is the index that is odd or even, and indices start at 0).
+
+## Traversing the DOM: ##
+
+Sometimes you want to traverse - when it is faster that the descendent selector:
+
+`$("#destinations".find("li")`
+
+Traversing is a bit faster.
+
+To traverse and find the first only:
+
+`$("li").first();`
+
+Instead of using the pseudo class (first, last, odd, even, traverse has methods that are the same thing).
+
+To find the middle elements, you can also "walk the DOM":
+
+`$("li").first().next();` (that would be the second entry)
+
+Also there is a `.prev()` method.
+
+You might want to walk up a DOM to a parent of an element.
+
+`$("li").first.parent();`
+
+Or walk down the DOM, to the children:
+
+`$("li").first.children("li");` (only want children that are list items - direct children, too I think).
+
+## Working with the DOM: ##
+
+Manipulating the DOM:
+
+For example, you have a button you can click, you want to replace the button with some text. (so remove the Button and add `<p>`).
+
+```
+$(document).ready(function() {
+  // create a <p> node with the price:
+  var price = $('<p>From $399.99</p>'); // set the HTML using jQuery
+  // This is a new node, but need to be added to the DOM:
+  // Four adding options: `.append()`, `.prepend()`, `.after()`, `.before()`
+  $('.vacation').before(price);
+});
+```
+
+Above code tries to put the price node before the .vacation one.
+`$('.vacation').after(price);` would be the next sibling node after .vacation.
+`$('.vacation').prepend(price);` would make price the first child of .vacation.
+`$('.vacation').append(price);` would make price the last child of .vacation.
+
+Alternatives to the above:
+
+`price.appendTo($('.vacation'));`
+`price.prependTo($('.vacation'));`
+`price.insertAfter($('.vacation'));`
+`price.insertBefore($('.vacation'));`
+
+
+To remove a node from the DOM:
+
+`$('button.).remove();`
+
+## Interaction: ##
+
+Inside the document ready function, you can pass in an event handler function.
+
+```
+$(document).ready(function() {
+ <codey mcCoderson>
+});
+```
+want
+The ready() function is already a listener function.
+
+To listen for an event on the function - you want to select the bit you are listening for interaction with:
+
+`$('button').on(event, event_handler);`
+
+`$('button').on('click', function() {<code>});`
+
+This returns all buttons on the DOM, and runs the event handler on each once it is clicked:
+
+```
+$(document).ready(function() {
+  $('button').on('click', function() {
+    var price = $('<p>From $399.99</p>');
+    $('.vacation').append(price);
+    $('button').remove();
+  });
+});
+```
+
+## Refactor using traverse: ##
+
+If you have multiple buttons, and click one, all of the buttons disappear and the price appears for all of them. Not what you want.
+
+Instead, you can use the 'this' keyword. i.e. the item that triggered the event.
+
+`$(this).remove()`
+
+If you want to add something to a specific part of the tree, but are using a child of that as the event item `$(this)`, then you can use the `closest` command:
+
+`$(this).closest('.vacation').append(price)` - it will append the `price` to the `.vacation` closest in the tree to `$(this)`.
+
+`closest` only returns one or zero nodes.
+
+## Traversing and filtering: ##
+
+All vacations have the same price. We want different price.
+
+In each `<li>` tag add a `data-price='399.99'` attribute:
+
+To get the price, you would:
+
+`$('.vacation').first().data('price');`
+
+or to set it:
+
+`$('.vacation').first().data('price', value);`
+
+```
+$(document).ready(function() {
+  $('button').on('click', function() {
+    var amount = $(this).closest('.vacation').data('price');
+    var price = $('<p>From $' + amount + '</p>');
+    $(this).closest(".vacation").append(price);
+    $('button').remove();
+  });
+});
+```
+
+There is a bit of duplication, so you could:
+
+
+```
+$(document).ready(function() {
+  $('button').on('click', function() {
+    var vacation = $(this).closest('.vacation');
+    var amount = vacation.data('price');
+    var price = $('<p>From $' + amount + '</p>');
+    vacation.append(price);
+    $('button').remove();
+  });
+});
+```
+
+Aside from repetition, there are fewer queries for the DOM, so it is a bit quicker.
+
+What about different types of buttons - you could make a CSS selector, or just select only those buttons with a .vacation class:
+
+`$('.vacation').on('click', 'button', function() {});`
+
+(This is called event delegation - ie only targetting buttons if they are in the right class).
+
+What about filters?
+
+On sale, for example:
+
+```
+$('#filters').on('click', '.onsale-filter', function(){
+  // Find all on-sale
+  $('.vacation').filter('.onsale'); // only get ones with that class (redundant by the next code line)
+  // add a class to these vacations
+  $('.vacation').filter('.onsale').addClass('highlighted);
+});
+```
+
+jQuery has an `addClass(class)` and `removeClass(class)` method.
+
+Similarly for "expiring" deals:
+
+```
+$('#filters').on('click', '.expiring-filter', function(){
+  // add a class to expiring vacations
+  $('.vacation').filter('.expiring').addClass('highlighted);
+});
+```
+
+You also need to un-highlight all old highlighted stuff:
+
+```
+$('#filters').on('click', '.expiring-filter', function(){
+  // Remove old highlighting
+  $('.highlighted').removeClass('highlighted');
+  // add a class to expiring vacations
+  $('.vacation').filter('.expiring').addClass('highlighted);
+});
+```
+
+## Listening to DOM events: ##
+
+For example wanting flight details on a button click:
+
+Make a CSS selector for the stuff to go into:
+
+```
+.ticket {
+  display: none;
+}
+```
+
+So 1) listen for click, 2) find ticket, 3) show it.
+
+Button event handler:
+
+```
+$(document).ready(function() {
+  $('.confirmation').on('click', 'button', function() {
+    // Find closest .confirmation to the button, and get the .ticket child:
+    $(this).closest('.confirmation').find('.ticket').slideDown();
+  });
+});
+```
+
+To show the ticket, you can use the `slideDown()` method, there are also `slideUp()` and `slideToggle()` methods.
+
+Also, $('node').length; tells you how many of those nodes are on the page.
+
+## More on `on()`: ##
+
+For example on `hover`:
+
+```
+$(document).ready(function() {
+  $('.confirmation').on('mouseenter', 'h3', function() {
+    $(this).closest('.confirmation').find('.ticket').slideDown();
+  });
+});
+```
+
+Other options include:
+
+`click`, `focusin`, `mousedown`, `mousemove`, `mouseover`, `mouseenter`, `dblclick`, `focusout`, `mouseup`, `mouseout`, `mouseleave`, all for the mouse!
+
+To avoid duplication of that event (it is the same as the one for the button above, make it another function, then just call that as the function, inside each event handler. Do not include parentheses after the function name (it would go immediately, and you want it to wait for the event).
+
+## Keyboard events: ##
+
+So say you have a text input field, and you want the price to multiply by the number inside that field.
+
+Need to listen for keyboard event - 
+
+Putting a plus in front of `$(this)` automatically converts it into a number rather than a string.
+
+```
+$(document).ready(function() {
+  $('.vacation').on('keyup', '.quantity', function() {
+    // Get price for vacation
+    var price = +$(this).closest('.vacation').data('price'); 
+    // Find number of people
+    var quantity = +$(this).val();
+    // Make new total = people * price
+    $('#total').text(price * quantity);
+  });
+});
+```
+
+Keyboard events:
+
+`keypress`
+`keydown` - starts pressing key
+`keyup` - stops pressing key
+
+Form events:
+
+`blur`
+`focus`
+`select`
+`submit`
+`change`
+
+## Link layover: ##
+
+Want to fade in comments. So to start with:
+
+```CSS
+.comments {
+  display: none;
+}
+```
+
+When a link is clicked we then want the comments to show:
+
+```
+$(document).ready(function() {
+  $('.vacation').on('click', '.expand', function() {
+    // Find comments UL
+    var comments_var = $(this).closest('.vacation').find('.comments');
+    // Fade in comments:
+    comments_var.fadeToggle();
+  });
+});
+```
+But if you have a link to click near the bottom of the page, the page will jump back to the top!
+
+That's because when an event occurs inside the DOM, you get an event bubble. It goes up to the top of the tree, and the default behaviour of the browser is to pop back to the top of the page.
+
+First step, add the `event` parameter to the event handler.
+Second step, `event.preventDefault();`
+
+```
+$(document).ready(function() {
+  $('.vacation').on('click', '.expand', function(event) {
+    // Prevent default behaviour.
+    event.preventDefault();
+    // Find comments UL
+    var comments_var = $(this).closest('.vacation').find('.comments');
+    // Fade in comments:
+    comments_var.fadeToggle();
+  });
+});
+```
+
+## Taming CSS: ##
+
+To change style, you can use both CSS or JavaScript.
+
+In jQuery you can get or set CSS using the following methods:
+
+`.css(<attr>, <value>)`
+`.css(<attr>)`
+`.css(<object>)`
+
+So `$(this).css('background-color', '#352464');`
+
+For multiply field changes at once, the cleanest is to give an object, like a dictionary, with a series of keys and values:
+
+`$(this).css({'background-color': '#352464', 'border-color': '#235235'});`
+
+You can also method chain, so between the `$(this).css({})` put a `find()`
+
+There are also the `.show()` and `.hide()` methods in jQuery.
+
+It's better to keep styles in JavaScript.
+
+So what you can do, is set different styles in the CSS, and then apply them to the objects.
+
+```CSS
+.style1 {
+  <code>
+}
+
+.style2 {
+  <code>
+}
+```
+
+Then:
+
+```
+...
+$(this).addClass('style1');
+...
+```
+
+You can also do a `toggleClass('style1')`
+
+## Animation: ##
+
+Maybe make elements move about a bit when selected:
+
+jQuery has an `animate(<object>)` into which you pass some CSS and it will go from the old CSS to the new.
+
+`$(this).animate({'top': '-10px'});`
+
+But if you only want it to go up, when adding the class, then add if statement:
+
+jQuery has the method `hasClass(<class>)` for this:
+
+```
+if ($(this).hasClass('highlighted')) {
+  $(this).animate({'top': '-10px'});
+} else {
+  $(this).animate({'top': '0x'}); // change it back
+}
+```
+
+But you can change the speed of the animation:
+
+This is set by a second argument to animate - which is the time in milliseconds.
+
+400 ms is the default.
+
+'fast' == 200ms
+'slow' == 600ms
+
+This speed argument is also usable in things like `slideToggle()` etc.
+
+Again, though, the CSS is in the JavaScript.
+
+You can actually write the transition in CSS and implement it:
+
+```CSS
+.vacation {
+  transition: top 0.2s;
+}
+.highlighted {
+  top: -10px;
+}
+```
+This only works with browsers that support CSS transitions. For others you might want to specify browser prefixes, such as:
+
+```
+.vacation {
+  -moz-transition: top 0.2s;
+}
+```

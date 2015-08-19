@@ -1,0 +1,479 @@
+# Notes on jQuery second course on Code School: #
+
+## Ajax basics: ##
+
+Typical web request - the browser normally requests stuff from web server, which returns an HTML and maybe some JavaScript. Then the DOM is created and the JavaScript is executed.
+
+With Ajax (Asynchronous JavaScript And XML):
+
+Without refreshing page you can request more data from a server and then load into the page dynamically.
+
+So when the JavaScript is being executed (after the DOM formation) there is an Ajax request to a server and a response. Then the JavaScript acts on the response, maybe interacting with the DOM and updating the webpage.
+
+For example, the flight details for the vacations example in jQuery.
+
+Previously, this was preloaded. But this time, we can wait to load it until someone requests it.
+
+So making that Ajax call uses the `$.ajax(url[, settings])` method:
+
+```
+$('.confirmation').on('click', 'button', function(){
+  $.ajax('http://example.org/confirmation.html', {
+    success: function(response) {
+      $('.ticket').html(response).slideDown(); //find the ticket and load the HTML it got back from server, then reveal with slide down.
+}}
+});
+```
+
+The first argument is the query. The second is an object that tells you what to do if there is success or not (they themselves are functions).
+
+By default, Ajax uses the same domain as your webserver, but if you want to make that an external, need the full URL, not the relative one you can get away with for the local server.
+
+The short hand version is just:
+
+`$.get(url, success)`
+
+i.e.
+
+```
+$.get('www.example.com/blah', function(response) {
+  $('.ticket').html(response).slideDown();
+});
+```
+
+The `.html(response)` method inserts the retrieved HTML into that part of the page.
+
+But to make it more interesting - you could do this local example with a confirmation number:
+
+```
+$('.confirmation?confNum=1234').on('click', 'button', function(){
+  $.ajax('http://example.org/confirmation.html', {
+    success: function(response) {
+      $('.ticket').html(response).slideDown(); //find the ticket and load the HTML it got back from server, then reveal with slide down.
+    }
+  }
+});
+```
+
+Alternatively, you can use the `data` method:
+
+```
+$('.confirmation?confNum=1234').on('click', 'button', function(){
+  $.ajax('http://example.org/confirmation.html', {
+    success: function(response) {
+      $('.ticket').html(response).slideDown(); //find the ticket and load the HTML it got back from server, then reveal with slide down.
+    },
+    data: {"confNum": 1234 }
+  }
+});
+```
+
+Perhaps that's easier with more fields.
+
+Alternatively, again, you could store the `confNum` as a data attribute of a div:
+
+`<div class="ticket" data-confNum='1234'>...`
+
+Then:
+
+```
+$('.confirmation?confNum=1234').on('click', 'button', function(){
+  $.ajax('http://example.org/confirmation.html', {
+    success: function(response) {
+      $('.ticket').html(response).slideDown(); //find the ticket and load the HTML it got back from server, then reveal with slide down.
+    },
+    data: {"confNum": $(".ticket").data("confNum") }
+  }
+});
+```
+
+What if the request times out or doesn't work:
+
+Make an `error` function:
+
+```
+$('.confirmation?confNum=1234').on('click', 'button', function(){
+  $.ajax('http://example.org/confirmation.html', {
+    success: function(response) {
+      $('.ticket').html(response).slideDown(); //find the ticket and load the HTML it got back from server, then reveal with slide down.
+    },
+    error: function(request, errorType, errorMessage) {
+      alert("Error: " + errorType + " with message " + errorMessage);
+    },
+    data: {"confNum": $(".ticket").data("confNum") }
+  }
+});
+```
+
+How long does the request wait until times out - browser dependent. So you can also specify how long to wait:
+
+```
+$('.confirmation?confNum=1234').on('click', 'button', function(){
+  $.ajax('http://example.org/confirmation.html', {
+    success: function(response) {
+      $('.ticket').html(response).slideDown(); //find the ticket and load the HTML it got back from server, then reveal with slide down.
+    },
+    error: function(request, errorType, errorMessage) {
+      alert("Error: " + errorType + " with message " + errorMessage);
+    },
+    timeout: 3000, // in ms
+    data: {confNum: $(".ticket").data("confNum") }
+  }
+});
+```
+
+Two other useful call backs to put in the `$.ajax` routine:
+
+```
+beforeSend: function() {
+  $('.confirmation').addClass('is-loading');
+}
+```
+It is run before the Ajax request is sent off - so a good place to put a loading screen.
+
+```
+complete: function() {
+ $('.confirmation').removeClass('is-loading');
+}
+```
+Run after both success or error. The last thing run, so a place to turn off the loading screen.
+
+Be careful with click handlers. Often they are only run once, when the page is loaded. So if you haven't had your Ajax request, it can't load anything, and won't update after later requests.
+
+You can change the click handler to always look for the link it wanted to pop up.
+
+To do this, use event delegation.
+
+Instead of:
+
+`$('.confirmation .view-boarding-pass').on('click', function() {...});`
+
+Have:
+
+`$('.confirmation').on('click', '.view-boarding-pass', function() {...});`
+
+## JavaScript objects: ##
+
+Refactor to objects - because all those handlers are messy!
+
+```
+var confirmation = {
+  init: function() {
+    // existing event handlers i.e.:
+    $('.confirmation').on('click', 'button', function() {
+      $.ajax('confirmation.html', {...});
+    });
+  }
+};
+```
+
+Then inside the document from before:
+
+```
+$(document).ready(function() {
+  confirmation.init();
+});
+```
+
+So all the handlers get initialised when the `init` method is called.
+
+Also you could make all the subfunctions inside there separate functions:
+
+```
+var confirmation = {
+  init: function() {
+    // existing event handlers i.e.:
+    $('.confirmation').on('click', 'button', this.loadConfirmation);
+    });
+  },
+  loadConfirmation: function() {
+    $.ajax('confirmation.html', {...});
+  }
+};
+```
+
+Nice and clean.
+
+## JavaScript functions: ##
+
+If you have multiple confirmations per page, you might want to put all your code in a function instead of an object.
+
+Object version:
+
+```
+var vacation = {
+  init: function() {
+    // init vacation
+  }
+};
+
+$(document).ready(function() {
+  vacation.init();
+});
+```
+
+Function version (note capital letter):
+
+```
+function Vacation(destination) {
+  // initialise vacation to destination
+  this.details = function() {
+    console.log(destination);
+  }
+}
+
+$(document).ready(function() {
+  var paris = new Vacation('Paris');
+  console.log(paris);
+  var london = new Vacation('London');
+}
+```
+
+So a nice big object from before:
+
+```
+var confirmation = {
+  init: function() {
+    $('.confirmation').on('click', 'button', this.loadConfirmation);
+    $('.confirmation').on('click', 'view-boarding-pass', this.showBoardingPass);
+  },
+  loadConfirmation: function() {...},
+  showBoardingPass: function() {...}
+};
+```
+
+Now as a function (el = the element, the jQuery element being passed to it):
+
+```
+function Confirmation(el) {
+  this.el = el; //save for reference
+  this.ticket = this.el.find('.ticket');
+  var confirmation = this;
+  // helper methods here
+  this.loadConfirmation = function() {
+    $.ajax('confirmation.html', {
+      timeout: 3000,
+      data: {location: el.data('location')},
+      context: confirmation,
+      success: function(response) {
+        this.ticket.html(response).slideDown();
+  }
+  // showBoardingPass is complicated because there are DOM elements hard coding.
+  this.showBoardingPass = function() {
+    event.preventDefault();
+    $(this).hide();
+    confirmation.el.find('.boarding-pass').show();
+  }
+  // event handlers here
+  this.el.on('click', 'button', this.loadConfirmation);
+  this.el.on('click', '.view-boarding-pass', this.showBoardingPass);
+}
+
+$(document).ready(function() {
+  var paris = new Confirmation($('#paris'));
+  var london = new Confirmation($('#london'));
+});
+```
+
+Sometimes jQuery changes which "this" it is refering to. Inside Ajax calls it is set back to the Ajax settings, not the one in the function. So make a variable in the function, set it equal to the element this, inside the Ajax call, set the `context`, then the `this` you call in Ajax is the `this` you want.
+
+Complicated!
+
+## Ajax with forms: ##
+
+Like if you select the number of nights and destination. You get a full page refresh with things you want. (`$.ajax` with `POST`)
+
+So with the form you have a listener:
+
+```
+$('.form').on('submit', function(event) {
+  event.preventDefault();
+  $.ajax('/book', {
+    type: 'POST',
+    data: { "destination": $('#destination').val(), "quantity": $('#quantity').val() }
+  });
+});
+```
+
+There is a better way to serialise the form fields:
+
+```
+$('.form').on('submit', function(event) {
+  event.preventDefault();
+  $.ajax('/book', {
+    type: 'POST',
+    data: $('form').serialize()
+  });
+});
+```
+
+To do anything, you need the `success` method.
+
+```
+$('.form').on('submit', function(event) {
+  event.preventDefault();
+  $.ajax('/book', {
+    type: 'POST',
+    data: $('form').serialize(),
+    success: function(result) {
+      // get rid of the form as it is used
+      $('form').remove();
+      // hide HTML from output and fade in
+      $('#vacation').hide().html(result).fadeIn();
+    }
+  });
+});
+```
+
+But to make even better, make a `form` variable:
+
+```
+$('.form').on('submit', function(event) {
+  event.preventDefault();
+  var form = $(this);
+  $.ajax('/book', {
+    type: 'POST',
+    data: form.serialize(),
+    success: function(result) {
+      // get rid of the form as it is used
+      form.remove();
+      // hide HTML from output and fade in
+      $('#vacation').hide().html(result).fadeIn();
+    }
+  });
+});
+```
+
+## Ajax with JSON: ##
+
+JSON = JavaScript Object Notation.
+
+Often an output from a server. e.g.:
+
+```
+{
+  totalPrice: 2196.00,
+  nights: 4,
+  location: 'Paris, France',
+  confirmation: '241r5q'
+}
+```
+
+The previous code would need to be changed:
+
+1) specify the response will be JSON using the `dataType` command:
+2) Specify a content type. This is sent with request to server, to ensure it sends JSON
+3) Change the success call - to make HTML from the JSON.
+4) Ensure duplication is cut out (URL - update the '/book' the form action stuff)
+
+```
+var form = $(this);
+$.ajax($($('form').attr('action'), {
+  type: 'POST',
+  data: form.serialize(),
+  dataType: 'json',
+  success: function(result) {
+    form.remove();
+    var msg = $("<p></p>");
+    msg.append("Destination: " + result.location + ". ");
+    msg.append("Price: " + result.totalPrice + ". ");
+    msg.append("Nights: " + result.nights + ". ");
+    msg.append("Confirmation: " + result.confirmation + ". ");
+    $('#vacation').hide().html(msg).fadeIn();
+  }
+  contentType: 'application/json'
+});
+```
+
+Interestingly, the `append` is putting it inside the `<p>` tags.
+
+## Utility methods: ##
+
+Show favourites button:
+
+```
+$('button').on('click', function() {
+  $.ajax('/cities/favourites/1', {
+    contentType: 'application/json',
+    dataType: 'json',
+    success: function(result) {
+      var favourite = $('.favourite');
+      favourite.find('p').html(result.name);
+      favourite.find('img').attr('src', result.image);
+    }
+  }
+};
+
+```
+
+What about multiple favourites. The JSON message returns an array of objects. But that messes up the success function. Use the `$.each(collection, function(object, index))` method. It has a collection to iterate through, and the function to apply them.
+
+```
+success: function(result) {
+  $.each(result, function(index, city) {
+    var favourite = $('.favourite-' + index);
+    favourite.find('p').html(city.name);
+    favourite.find('img').attr('src', city.image);
+  };
+}
+```
+
+Transforming JSON into html.
+
+Can use the jQuery `$.getJSON(url, success);` request.
+
+So for a list of flight statuses:
+
+```
+$('.update-status').on('click', function() {
+  $.getJSON('/status', funtion(results) {
+    var statusElements = $.map(result, function(status, i) {
+      var listItem = $('<li></li>');
+      $('<h3>' + status.name + '</h3>').appendTo(listItem);
+      $('<p>' + status.status + '</p>').appendTo(listItem);
+      return listItem;
+    };
+    $('.status-list').html(statusElements)
+    });
+});
+```
+
+You can make an array of results using `$.map()`
+
+It takes a $.map(collection, function(item, index){});
+
+Map returns an array, modified by what is returned in the function as an argument.
+
+i.e.:
+
+```
+var myNumbers = [1,2,3,4];
+
+var newNumbers = $.map(myNumbers, function(item, index) { return item + 1});
+```
+
+So `newNumbers = [2,3,4,5]`
+
+`each` and `map` are different
+
+The each method returns an array as it was when it was created.
+
+The map method does what you ask it to.
+
+There is also a detach method. It allows you to remove an element from the DOM. Do stuff to it, then append it back on.
+
+It is more efficient:
+
+```
+$('.update-status').on('click', function() {
+  $.getJSON('/status', funtion(results) {
+    var statusElements = $.map(result, function(status, i) {
+      var listItem = $('<li></li>');
+      $('<h3>' + status.name + '</h3>').appendTo(listItem);
+      $('<p>' + status.status + '</p>').appendTo(listItem);
+      return listItem;
+    };
+    $('.status-list').detach().html(statusElements).appendTo('.status');
+    });
+});
+```

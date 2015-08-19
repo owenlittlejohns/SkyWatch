@@ -38,3 +38,22 @@ Notes on the second Code School JavaScript course, including:
 * Enumeration with the For-In loop.
 * Prototypes, inheritance, hierarchy.
 * Classes, overriding methods.
+
+## jQuery_notes1.txt: ##
+
+* The DOM.
+* Modifying tags.
+* Traversing and manipulating the DOM.
+* Interaction (event handlers).
+* `on()`.
+* CSS with jQuery.
+* Animation.
+
+## jQuery_notes2.txt: ##
+
+* Ajax, get, post.
+* Ajax, `data`, `success`, `dataType`, `type`, `error`, `complete`, `contentType` and `beforeSend` methods.
+* Ajax, using JavaScript objects or functions.
+* Ajax with forms.
+* Ajax with JSON.
+* Utility methods (`$.each` and `$.map`).
