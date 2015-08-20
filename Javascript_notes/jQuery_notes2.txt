@@ -477,3 +477,323 @@ $('.update-status').on('click', function() {
     });
 });
 ```
+
+## Events for plugins: ##
+
+New scenario, two functions that both log out to the console. And a button. When the button is pressed you want to call both functions.
+
+What is we wanted to turn off event handlers, though, so button doesn't always work.
+
+There is an `off()` method.
+
+So:
+
+```
+function picture() { console.log('Show plane'); }
+function status() { console.log('In service'); }
+
+$(document).ready(function() {
+  $('button').on('click', picture);
+  $('button').on('click', status);
+  $('button').off('click') // no more event handlers will happen
+});
+```
+What if you only want to turn off a single thing - use event namespacing:
+
+```
+$('button').on('click.image', picture);
+$('button').on('click.details', status);
+$('button').off('click.image'); // only turn off the image
+```
+
+You just are adding labels to the click handler to make them easier to single out.
+
+Also, if you want ALL '.image' bits off, you can just do:
+
+```
+$('button').off('.image');
+```
+
+Another useful thing is a trigger event. So make event happen in JavaScript, rather than waiting for something to happen on the page.
+
+```
+$('button').trigger('click');
+```
+
+Or be more specific with
+
+```
+$('button').trigger('click.details');
+```
+
+So in a new example, all the individual trips have their own "show price" button.
+
+To handle all of them:
+
+```
+// define the event handler:
+$('.vacation').on('click.price', 'button', showPrice);
+var showPrice = function() {
+  var vacation = $(this).closest('.vacation');
+  var price = vacation.data('price');
+  var details = $('<p>Book 3 days for $' + (3 * price) + '</p>');
+  vacation.append(details); //But it in the vacation list item.
+};
+```
+
+We also want a handler to show all prices at once, but want to use the 1showPrice` function so don't repeat code:
+
+```
+var showPrice = function() {...};
+$('.vacation').on('click.price', 'button', showPrice);
+$('.vacation').on('show.price', showPrice);
+
+$('.show-prices').on('click', function(event) {
+  event.preventDefault();
+  $('.vacation').trigger('show.price');
+}
+```
+
+1) Create a custon event, called `show`
+2) To trigger event to happen, we use `trigger`
+3) To only do on the last item, change `'.vacation'` to `'.vacation.last'`
+
+## Plugins - to encapsulate reusable behaviour: ##
+
+To set up a plugin:
+
+```
+$.fn.priceify = function() {
+  this.each(function() {
+    var vacation = this;
+    vacation.on('click.priceify', 'button', function() {
+      var price = vacation.data('price');
+      var details = $('<p>Book 3 days for $' + (3 * price) + '</p>');
+      $(this).hide(); // hide the button
+      vacation.append(details);
+    });
+  });
+};
+
+// use plug in:
+
+$(document).ready(function() {
+  $('.vacation').priceify();
+});
+```
+
+`priceify` is the name of the plugin
+`$.fn` makes the plugin available to all objects
+
+The `this.each` loops through for each element in list to make it work properly.
+
+We can send in argument to a plugin using a JavaScript object:
+
+`$('.vacation').priceify({ days: 5 });`
+
+Then in the declaration:
+
+`$.fn.priceify = function(options) {...}`
+
+Optional parameters... i.e. a default value for days.
+
+You need to use the utility method: `extend()` it takes in two or more objects and combines them.
+
+`$.extend({days: 3}, {price: 5});`
+
+becomes:
+
+`{ days: 3, price: 5}`
+
+Calling the `extend` method with two objects containing the same key, the later value of that key is applied:
+
+`$.extend({days: 3}, {days: 5});`
+
+becomes:
+
+`$.extend({days: 5});`
+
+So put all the defaults in the first parameter to `extend`.
+
+A good practice is to then refer to this new object everywhere in that function after creating it. Rather than refering to the `$(this).data`
+
+To cleanly make the showAllPrices button. Make the behaviour inside the function for the individual button inside it's own function.
+
+```
+$.fm.priceify = function(options) {
+  this.each(function() {
+    var settings = $.extend{...};
+    var show = function() {
+      var details = $('<p>' + ... + '</p>');
+      $(this).hide();
+      settings.vacation.append(details);
+    });
+    settings.vacation.on(click.priceify', 'button', show);
+    settings.vacation.on('show.priceify', show);
+};
+```
+Then create a custon handler:
+
+```
+$('.show-prices').on('click', function(event) {
+  event.preventDefault();
+  $('.vacation').trigger('show.priceify');
+});
+```
+
+Removing behaviour of a plugin:
+
+Create a remove function in the plugin, and a click handler for it:
+
+```
+$.fn.priceify = function(options) {
+  ...
+  var remove = function() {
+    setting.vacation.hide().off('.priceify');
+  };
+  settings.vacation.on('click-priceify', '.remove-vacation', remove);
+};
+```
+
+## Promises: ##
+
+Previous version to get weather not using a Promise:
+
+```
+$('button').on('click', function() {
+  var location = $('.loc').text();
+  $.ajax('/weather', {
+    data: {Q: location},
+    success: function(result) {
+      $('.weather').text(result.weather);
+    }
+  });
+});
+```
+
+But to extract the Ajax call for multiple pages on webside:
+
+Build the Promise object inside a variable called weather:
+
+(promise is the result of the Ajax query)
+
+```
+var Weather = {
+  today: function(location) {
+    var promise = $.ajax('/weather', {
+      data: {q: location}
+    });
+  return promise;
+}
+
+// Use the promise:
+$('button').on('click', function() {
+  var location = $('.loc').text();
+  var todayPromise = Weather.today(location);
+  todayPromise.done(function(result) {
+      $('.weather').text(result.weather);
+  });
+});
+```
+
+The promise misses the success method, because we want to define what happens to the Ajax upon success in the main bit of code. `promise.done` is basically what happens in `success`.
+
+Code isn't great, because we don't know that `weather` is a thing inside the `result` object. The code would be better if it only had to know about `result`.
+
+```
+var Weather = {
+  today: function(location) {
+    var promise = $.Deferred();
+    $.ajax('/weather', {
+      data: {q: location},
+      success: function(result) {
+        promise.resolve(result.weather);
+      }
+    });
+    return promise;
+  }
+}
+
+// Use the promise:
+$('button').on('click', function() {
+  var location = $('.loc').text();
+  var todayPromise = Weather.today(location);
+  todayPromise.done(function(result) {
+      $('.weather').text(result);
+  });
+});
+```
+
+Defered creates a new promise. resolve calls the done callback. If it fails, you have `reject`.
+
+If the Ajax call fails:
+```
+var Weather = {
+  today: function(location) {
+    var promise = $.Deferred();
+    $.ajax('/weather', {
+      data: {q: location},
+      success: function(result) {
+        promise.resolve(result.weather);
+      },
+      error: function() {
+        var error = 'invalid location';
+	promise.reject(error);
+      }
+    });
+    return promise;
+  }
+}
+
+// Use the promise:
+$('button').on('click', function() {
+  var location = $('.loc').text();
+  var todayPromise = Weather.today(location);
+  todayPromise.done(function(result) {
+      $('.weather').text(result);
+  }).fail(function(error){
+      console.log(error);
+  });
+});
+```
+
+Calling 2 promises, one after another:
+
+```
+$('button').on('click', function() {
+  var loc = $(this).parent().data('loc');
+  // empty the div in case it has previously been used by the function
+  var resultsDiv = $(this).parent().find('.results').empty();
+  Weather.today(loc)
+    .done(function(WeatherResult){
+      resultDiv.append(weatherResult);
+    });
+  City.find(loc)
+    .done(function(cityResult){
+      resultDiv.append(cityResult);
+    });
+});
+```
+
+But the Ajax calls get fired off together, and may finish in different orders depending on the connection to each server etc. But we want them in a fixed order.
+
+With promises, you can use `$.when()` and `$.then()`
+
+`$.when()` takes in any number of promises and `$.then(function(p1data, p2data))` gives the callback data in the order of the promises stored in it.
+
+So `$.when()` makes the code wait for all the promises to complete, and `$.then()` displays them in the correct order on the screen.
+
+
+```
+$('button').on('click', function() {
+  var loc = $(this).parent().data('loc');
+  // empty the div in case it has previously been used by the function
+  var resultsDiv = $(this).parent().find('.results').empty();
+  $.when(
+    Weather.today(loc),
+    City.find(loc)).then(function(weatherResult, cityResult){
+      resultDiv.append(cityResult);
+      resultDiv.append(weatherResult);
+    });
+});
+```

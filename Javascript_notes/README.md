@@ -57,3 +57,4 @@ Notes on the second Code School JavaScript course, including:
 * Ajax with forms.
 * Ajax with JSON.
 * Utility methods (`$.each` and `$.map`).
+* Promises.
