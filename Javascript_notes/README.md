@@ -58,3 +58,9 @@ Notes on the second Code School JavaScript course, including:
 * Ajax with JSON.
 * Utility methods (`$.each` and `$.map`).
 * Promises.
+
+## BestPractices.txt##
+
+* Syntax (ternary conditionals, logical assignment, switch block)
+* 
+*

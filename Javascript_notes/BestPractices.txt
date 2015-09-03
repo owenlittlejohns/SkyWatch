@@ -1,0 +1,321 @@
+# JavaScript best practices course on Code School: #
+
+## Syntax: ##
+
+Ternary conditionals:
+
+Standard conditional block e.g.:
+
+```
+var isArthur = false;
+var weapon;
+
+if (isArthur) {
+  weapon = "Excalibur";
+} else {
+  weapon = "Longsword";
+}
+```
+
+This takes two blocks of code to make a single assignment.
+
+To make it more concise use a ternary conditional.
+
+`someCondition ? pickIfTrue : pickIfFalse`
+
+so:
+
+`isArthur ? "Excalibur" : "Longsword"`
+
+But to assign to a variable:
+
+`var weapon = isArthur ? "Excalibur" : "Longsword"`
+
+Ternary conditionals can be used to concatenate stuff, but a `?` has a lower precedent than `+`. So for example, you would need to do:
+
+`console.log("Some string" + (isArthur ? "Excalibur" : "Longsword"));`
+
+
+"Falsy" values are : `false`, `0`, `undefined`, `NaN`, `""`. Without parentheses, the `returns` a string of `"false"`, so as it is a valid string, it thinks it is true, and therefore returns the wrong statement.
+
+Compound ternary conditions:
+
+For example a guy called Arthur, but who isn't the king:
+
+```
+var isArthur = true;
+var isKing = false;
+
+console.log("string" + (isArthur && isKing ? "Excalibur" : "Longsword"));
+```
+
+Ternaries can also take actions in their results.
+
+```
+var isArthur = true;
+var isKing = true;
+
+isArthur && isKing ? alert("blah"): alert("other blah");
+```
+
+They are a good way to invoke functions:
+
+```
+var isArthur = true;
+var isKing = true;
+
+isArthur && isKing ? function() {
+	 alert("blah");
+	 }()
+	 : function(){
+	 alert("other blah");
+	 }();
+```
+
+You can also take multiple actions, but it can get messy:
+
+```
+var weapon;
+var helmet;
+isArthur && isKing ? (weapon = "Blah", helmet = "blah") 
+	 :
+	 (weapon = "otherBlah", helmet = "otherBlah");
+```
+
+Multiple statements in a single ternary are grouped by parentheses and separated by a comma.
+
+Ternaries can be nested!
+
+Don't do it too often, because it can be illegible.
+
+```
+isArthur && isKing ? (weapon = "Excalibur", helmet = "Goosewhite")
+	 :
+	 isArcher ? (weapon = "Longbow", helmet = "Mail Helm")
+	 	  : (weapon = "Longsword", helmet = "Iron Helm");
+```
+
+Indentation makes it more legible.
+
+## Logical assignment: ##
+
+Logical operators can make conditional assignments even shorter than ternaries:
+
+This is the ternary code to start with:
+
+```
+var armory = { addSword: function (sword) {
+    	       	  this.swords = this.swords ? this.swords : [ ];
+		  this.swords.push(sword);
+		}
+	     };
+```
+
+The first line in the function checks to see if `this.swords` exists. If it does, it returns that thing back out. If it doesn't it makes an empty array.
+The second line adds the new sword, regardless of the original format.
+
+```
+var armory = { addSword: function (sword) {
+    	       	  this.swords = this.swords || [ ];
+		  this.swords.push(sword);
+		}
+	     };
+```
+
+When using the OR operator, it picks the first "truthy" value it finds. So if `this.swords` is undefined, it will be ignored and then the empty array will be picked. An empty array is not false.
+
+The logical operator "short circuits" in that once it finds a "truthy" value it makes the assignment and doesn't bother looking at the rest of the statement.
+
+Let's use the method:
+
+```
+armory.addSword("Broadsword");
+armory.addSword("Katana");
+```
+
+Remember the order of the assignments matter! Work from left to right (most to least important). Default cases at the end of the logical assignments.
+
+Other OR assignments:
+
+If all elements are false, then all possibly entries are evaluated, and the final one is selected:
+
+```
+var result1 = undefined || "";
+```
+
+This would return `""`, even though it is a "falsy" value, because it is the last resort value.
+
+The AND operator.
+
+The `&&` operator takes the rightmost "truthy" value or the first "falsy" value.
+
+```
+var result1 = undefined && 42;
+```
+
+This result will be `undefined` because it short circuits at the first "falsy" value.
+
+If all elements are "truthy" then the last "truthy" value is returned.
+
+AND is useful in "contingent assignments", where one thing must be true before continuing. It also allows us to check multiple conditions before assignment.
+
+Starts of with a ternary conditional, to check if the sword is in there.
+
+```
+armory.retrieveSword = function (request) {
+    return (this.swords.indexOf(request) >= 0) ?
+        this.swords.splice(this.swords.indexOf(request), 1)[0] :
+	alert("Sword " + request + " not in there");
+}
+```
+
+`splice(index, number)` returns `number` many entries from an array starting at `index`. Then the old array is re-indexed. The assigned result is an array, even if there only one result!
+The `[0]` gives the string.
+
+So make it so that only knights can retrieve swords:
+
+```
+var isKnight = true;
+var weapon = isKnight && armory.retriveSword("Katana");
+
+```
+
+Trying to evaluate the retrieveSword method, with a non-existant sword, will produce the alert, but return `undefined`, so `weapon = undefined`.
+
+You can string many operators together:
+
+```
+var armoryIsOpen = true;
+var isKnight = true;
+var weapon = armoryIsOpen && isKnight && armory.retrieveSword("Katana");
+```
+
+Remember the NOT operator. e.g.: `!variable`
+
+## The switch block: ##
+
+It's like a conditional for multiple possibilities. It is based on values, not booleans.
+
+e.g. 8 different regiments, that each should have a different weapon.
+
+An old way to do it, could be:
+
+```
+function Knight (name, regiment) {
+    this.name = name
+    this.regiment = regiment;
+    if(regiment == 1) {
+        this.weapon = "Broadsword";
+    } else if (regiment == 2) { ....
+
+    }
+}
+var soldier = new Knight("Timothy", 1);
+```
+
+Instead use the switch keyword:
+
+```
+function Knight (name, regiment) {
+    this.name = name
+    this.regiment = regiment;
+    switch (regiment) {
+        case 1:
+	    this.weapon = "Broadsword";
+	case 2:
+	    this.weapon = "..";
+	...
+    }
+}
+var soldier = new Knight("Timothy", 1);
+```
+
+`switch(variable)` means take specific action based on value of the variable.
+
+You have to be careful with `switch` cases, inherited from C is "fall-through", which arises from coders wanting mulitple cases to cause the same behaviour, or a case causing multiple behaviours.
+
+What actually happens is that the code inside the `switch` block just uses the `case` as a starting point.
+
+To fix fall-through, you need the `break` keyword:
+
+```
+function Knight (name, regiment) {
+    this.name = name
+    this.regiment = regiment;
+    switch (regiment) {
+        case 1:
+	    this.weapon = "Broadsword";
+	    break;
+	case 2:
+	    this.weapon = "..";
+	    break;
+	...
+    }
+}
+var soldier = new Knight("Timothy", 1);
+```
+
+`break` makes you leave that block of code.
+
+If you want multiple statements to take the same action, stack them:
+
+```
+function Knight (name, regiment) {
+    this.name = name
+    this.regiment = regiment;
+    switch (regiment) {
+        case 1:
+	case 2:
+	    this.weapon = "..";
+	    break;
+	...
+    }
+}
+var soldier = new Knight("Timothy", 1);
+```
+
+You can stack as many cases as you want, and then just use the fall through to your advantage.
+
+If you pass a `switch` block that doesn't have a `case` value, by default the value would be `undefined`.
+
+A `case` label could also be a string.
+
+There is also a default case:
+
+```
+function Knight (name, regiment) {
+    this.name = name
+    this.regiment = regiment;
+    switch (regiment) {
+        case 1:
+	case 2:
+	    this.weapon = "..";
+	    break;
+	...
+	default:
+	    do stuff;
+    }
+}
+var soldier = new Knight("Timothy", 1);
+```
+ You don't need a break statement after the last case, because there is no point having it.
+
+You could also use fall-through by organising your code to be least common properties at the top, and most common at the bottom.
+
+```
+function ceremonialDagger(knight, rank){
+    this.length = 8;
+    this.owner = knight;
+    switch(rank){
+        case "King": this.diamonds = 1;
+        case "High Constable": this.amethyst = 2;
+        case "Field Marshal": this.sapphires = 4;
+        case "Captain": this.emeralds = 1;
+        case "Knight": this.rubies = 6;
+    }
+}
+```
+
+So if you are the "King", you not only get the diamond, but all the other jewels everyone else gets, too. The "Knight" only gets the rubies. etc.
+
+Fall-through can be really helpful, but it must be very careful when using for hierarchy stuff.
