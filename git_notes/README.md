@@ -151,4 +151,10 @@
 * For deleted commit, get SHA hash, then:
  * `git reset --hard SHAHASH`
 * For deleted branch:
- * `git branch NEW_BRANCH_NAME SHAHASH_DELETED_BRANCH_LAST_COMMIT`
+* `git branch NEW_BRANCH_NAME SHAHASH_DELETED_BRANCH_LAST_COMMIT`
+
+## githubnotes.txt: ##
+
+* Configuration, forking, cloning, pull requests.
+* Single repository workflows, collaborative practices.
+* Release tags, release branches,

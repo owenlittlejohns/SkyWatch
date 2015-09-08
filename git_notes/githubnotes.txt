@@ -1,0 +1,242 @@
+# Notes of GitHub course from CodeSchool: #
+
+
+Git configuration:
+
+can be done at `--local`, `--global` or `--system` level. (Differences between global and system are that global is just for your user, whilst the system is for all users.)
+
+To check user name and email:
+
+```
+git config --global user.name "what I want to change it to"
+git config --global user.email
+git config --global --list # list all of them
+```
+
+You can edit in the ~/.gitconfig
+
+The local configuration is within the .git/config
+
+Configuring line endings.
+
+For linux, you should probably use:
+
+`git config --global core.autocrlf input`
+
+Push defaults:
+
+The default is to push all branches. You probably want to change it to simple, so it only pushed the changes in the current branch.
+
+`git config --global push.default simple`
+
+The pull default:
+
+(remember it is a fetch and a pull)
+
+It's better to do a `git pull --rebase`, so you don't get these extra commits that are only merges.
+
+So set:
+
+`git config --global pull.rebase true`
+
+You can ask git to record how you resolve a merge conflict, then apply that resolution to a later conflict that is the same
+
+(Reuse Recorded Resolution - ReReRe) to use:
+
+`gut config --global rerere.enabled true`
+
+To configure old git to include colours:
+
+`git config --global color.ui true`
+
+Use aliases to make things simpler:
+
+`git s`
+
+This is `git status -s` (in silent mode):
+
+`git config --global alias.s "status -s"
+
+`git lg` for `git config --global alias.lg "log --oneline --decorate --all --graph"`
+
+Configurations can be shared. Put them in a wiki, or into a repo.
+
+## Forking and cloning: ##
+
+Create the new repo, then download locally:
+
+(If you aren't a collaborator, you can still download, save and commit, but not push). Instead you create a fork, but it's under your own organisaiton. It's basically like making your own version of the same repo.
+
+`git clone gitURL...`
+
+## Submitting a pull request: ##
+
+You fork from an original project, edit locally, push to own fork, then create a fork request, for the owner to look at and see if they want to pull it back in to their original master branch.
+
+Click the `pull request` button on the right hand side of the GitHub page for the forked repo. Then create a new request. (Merge requets)
+The request will be in their repository, because that's where you want the code to end up.
+
+Then you can see a list of pull requests.
+
+If you don't agree entirely with someone's pull request, you can make comments on it, which will go back to the requester.
+
+Then if they add, commit and push change, the request will be updated to include the new commits.
+
+## Updating your fork: ##
+
+You need to make sure you update your fork to include changes that have been made by other people.
+
+Imagine an upstream repo. Two developers create downstream clones of that.
+
+Then push to forks, create pull requests, get the changes merged upstream. But you need to make sure you have the changes from the other developer.
+
+```
+git remote add name_of_remote <path_to_upstream_repo>`
+git fetch upstream
+git merge upstream/master master
+git push origin master
+```
+
+## Single repository workflows: ##
+
+If you use a forked based work flow it gets tricky. Instead:
+
+Everyone works with a clone of the same GitHub clone. You then push/pull to that repo.
+
+If everyone commits directly to the master branch, you'll get conflicts. Instead you need feature branches to work specifically on locally.
+
+With a pull (merge) request, you can comment on the merge rather than have to send emails around about it.
+
+`git push -u origin branch_name` (push new branch to remote repo)
+
+To add a collaborator to a fork on GitHub, go into fork, go into settings and select the `Collaborators` button.
+
+## Collaborating on pull requests: ##
+
+You could merge without feedback.
+
+But this is a bad idea.
+
+Three types of comment on the pull request:
+
+1) On the request itself (ie this is a good feature)
+2) On the commit level (i.e. not sure about these changes)
+3) Line changes (don't delete line 12)
+
+Use @username for team members github username. It'll be realtime chat.
+
+When reviewing the pull request:
+
+```
+git fetch
+git branch -a # show all branches
+git checkout branch_name # checkout local copy of remote branch
+git add ...
+git commit -m "Message"
+git push # update pull request yourself
+```
+
+## Best practices for merging pull requests: ##
+
+1) Should you use an interactive rebase to simplify history?
+2) Rebase to create a linear history?
+3) Fast-forward or recursive merging?
+
+Before you merge branch back in, perhaps squash a load of commits together to simplify your own history.
+
+But don't squash all into one. You want an element of granular history.
+
+The linear history, just makes it look like one feature was developed at a time. It makes it seem easier.
+
+```
+git checkout feature_branch
+git rebase master
+```
+
+A fast-forward merge has fewer commits. But it is difficult to tell which commits were made on which branch.
+
+To ensure recursive happens:
+
+`git merge --no-ff feature_branch`
+
+You can also just revert the merge commit from a recursive merge to remove the feature branch.
+
+In `rebase -i` text editor:
+
+`r` reword
+`f` fix up - squash.
+
+`git push -f` - a forced push
+
+## Tags: ##
+
+Every time you push to production you should make a tag. This enables you to know which code is in productions.
+
+Three types:
+
+1) Lightweight - just a tag, no message or tagger
+2) Signed - uses public key to prove identity of tagger
+3) Annotated - (most used) name commit, capture who and when tag created and why (in a message).
+
+Annotated tag:
+
+`git tag -a v1.3.2 -m "Tag message"`
+
+The `v1.3.2` is the tag name.
+
+You have to then push it to GitHub:
+
+`git push --tags`
+
+Semantic versioning:
+
+"vmajor.minor.patch"
+
+Major identifies substantial changes.
+Minor are new user functionality
+Patch are bug fixes.
+
+To assign a tag to a commit, checkout the SHA hash of that commit. That puts you in a detached head state (not on a branch).
+
+Then create the tag:
+
+`git tag -a v1.1.0 -m "Message for tag"`
+
+Then push the tag:
+
+`git push --tags`
+
+semver.org tells you all about best practices for semantic version numbers.
+
+## Release branches: ##
+
+You want to make changes to release without effecting master branch. HOTFIX!
+
+So you branch off the master, fix. Create tag. Push
+
+Three cases to do this:
+
+1) Manual QA
+2) Long running releases
+3) On demand hot fixes.
+
+If you have manual QA, you'll probably have a lot of hot fixes every time you have a new release. So make a release branch, then you run the hot fixes, then merge it into the master branch with a new tag at the end of the hot fix process.
+
+If you have lots of versions, that are long running, so you need to have a lot of branches.
+
+Otherwise, you'll do it when you have a hot fix. So checkout the tag, then make the hot fix, tag the fix and then merge it back in. Then delete the release branch.
+
+## Releases: ##
+
+GitHub feature. You can share binaries with collaborators via GitHub and also provide additional documentation.
+
+You can do it two way:
+
+1) Go into tags created on the command line and upload binaries, and notes.
+2) Create one from scratch on GitHub.
+
+This allows users to download a zipped copy of the state, without cloning the repo.
+
+You can also select if it is a pre-release and it should be treated with caution. You also select the publish release button.
+
+Alternatively, select a specific commit on GitHub and click in the top right on "Draft New release". You can scroll through the commits to choose the one you want, then add tags, titles and notes. Then again publish the release.
