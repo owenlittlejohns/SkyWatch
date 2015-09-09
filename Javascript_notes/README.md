@@ -62,5 +62,6 @@ Notes on the second Code School JavaScript course, including:
 ## BestPractices.txt##
 
 * Syntax (ternary conditionals, logical assignment, switch block)
-* 
-*
+* Performance (loop optimisation, cache, kill extra steps, etc)
+* Caution (comparisons, exception handling, try block, defaults, inheritance, `eval`, `with`)
+* Modularity (namespacing, anonymous closures, global imports, augmentation)

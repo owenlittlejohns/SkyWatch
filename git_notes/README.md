@@ -157,4 +157,5 @@
 
 * Configuration, forking, cloning, pull requests.
 * Single repository workflows, collaborative practices.
-* Release tags, release branches,
+* Release tags, release branches.
+* Releases, Wikis, GitHub pages

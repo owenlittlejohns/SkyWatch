@@ -240,3 +240,79 @@ This allows users to download a zipped copy of the state, without cloning the re
 You can also select if it is a pre-release and it should be treated with caution. You also select the publish release button.
 
 Alternatively, select a specific commit on GitHub and click in the top right on "Draft New release". You can scroll through the commits to choose the one you want, then add tags, titles and notes. Then again publish the release.
+
+## Issues: ##
+
+Issues can be used for:
+
+1) Tracking bugs
+2) Manage features
+
+Enabling issues for a project can be done in "settings/options" click "Issues" to enable. Enabled by default. If you disable issues, even though you have some, they'll still be saved. Switching back on will return them.
+
+Public repo - anyone can access issues
+Private repo - only collaborators
+
+Clicking on the issues button in the navigation bar will give a list.
+
+They can be filtered, by open, closed, newest, who they have been assigned to and what the labels for the issues are ("bugs", etc)
+
+Issues are all on the GitHub page, and GUI forms type stuff.
+
+You get notifications once you are mentioned in an issue, or it is assigned toyou. You can also click to "unsubscribe" from the issue. Or you can "subscribe" to them too.
+
+If you reply to the notification, it will respond to the person in charge.
+
+You can also refer to the issue number in the commit, and it will get included in the feed for the issue:
+
+`git commit -m "Should help with issue #1"`
+
+If you use the words: `fixes` or `closes` in the same commit message, the issue will be closed when the commit is merged into the master branch. The issue doesn't require "issues" in the commit message, just the `#number`
+
+There are keyboard short cuts on GitHub, too.
+
+## Wikis: ##
+
+Good practice to create README.md in root directory of project. As the project gets too large, instead, create a GitHub wiki.
+
+This is enabled in settings/options. You can also restrict it so only collaborators can contribute to the wiki on a public project.
+
+You can create the initial page, then start editting the wiki.
+
+You can link things easily by clicking the link button.
+
+There are other buttons, but probably easier to type the mark down yourself. This type of markdown is GitHub flavoured. It's a bit different to other types, but fairly simple.
+
+Status badges can be added. These are just images. But they get updated by the project. It's a dynamic thing.
+
+Linking to wiki pages, you just need the title of that page.
+
+## Creating your user page: ##
+
+GitHub pages can be used to add documentation for a project, or for a user page.
+
+Create repo for username.github.io
+Use auto page generator
+Write content
+Pick theme
+Publish
+
+It takes about 10 minutes to push live to the URL.
+
+To make a project page
+
+Select in settings,
+
+then follow all the above steps. But it is now a gh-page.
+
+The default name for a project page is:
+
+username.github.io/project_name
+
+Configure custom domain name:
+
+Create CNAME file in root of repo.
+
+Configure CNAME with DNS host.
+
+This file only needs to contain the name that we want to point to that page.

@@ -318,4 +318,841 @@ function ceremonialDagger(knight, rank){
 
 So if you are the "King", you not only get the diamond, but all the other jewels everyone else gets, too. The "Knight" only gets the rubies. etc.
 
-Fall-through can be really helpful, but it must be very careful when using for hierarchy stuff.
+Fall-through can be really helpful, but it must be very carefully used when using for hierarchy stuff.
+
+## Loop optimisation: ##
+
+Often test multiple implementation of the same result. That way you can choose the best implementation.
+
+A common for-loop:
+
+```
+treasureChest = {
+	      goldCoins: 10000,
+	      magicalItems: "Crown of Speed",
+	      necklaces: ["ruby", "pearl", "sapphire", "diamond"]
+	      openLid: function () {
+	          alert("Creeeeak");
+	      }
+
+for (var i = 0; i < treasureChest.necklaces.length; i++) {
+    console.log(treasureChest.necklaces[i});
+}
+```
+
+But at the start of each cycle, the loop needs to find and retrieve:
+
+1) the value of `i`
+2) the `treasureChest` object
+3) the `necklaces` property
+4) the array references by the property
+5) the length of the array
+
+(This is being done by the `for ()` bit)
+
+All we really care about is the loop counter and the length of the array.
+
+Using cached values, it can be faster:
+
+```
+var x = treasureChest.necklaces.length;
+for(var i = 0; i < x; i++) {
+    console.log(treasureChest.necklaces[i]);
+}
+```
+
+So now, the total is:
+1) create variable `x`
+2) each time the loop is cycled through:
+a) find and retrieve `i`
+b) find and retrieve `x`
+
+So simple calculation:
+
+Now:
+
+Two steps per loop cycle (4 entries in necklace, plus one to terminate the loop)
+5 steps to make the variable. (this is a constant)
+
+Total 15.
+
+Instead of:
+
+Five steps per loop cycle (4 + 1) = 25 steps.
+
+To be even better, we can directly put the control variable `x` directly inside the first loop parameter:
+
+```
+for(var i = 0, x = treasureChest.necklaces.length; i < x; i++) {
+    console.log(treasureChest.necklaces[i]);
+}
+```
+
+Any declared variables in the `for` block will be available later on. So don't overwrite globals.
+
+Avoid repetitive access at depth.
+
+Make a new variable that is the array of necklaces:
+
+```
+var list = treasureChest.necklaces;
+for(var i = 0, x = treasureChest.necklaces.length; i < x; i++) {
+    console.log(list[i]);
+}
+```
+
+Also make sure you are using the best type of for loop.
+
+If trying to reach every index in an array, stick with a `for` loop (not `for-in`). The for in, will include array methods (that you add to the prototype), not just the values within the array.
+
+New methods you add to a prototype are enumerable, which is why they can be iterated over in the `for-in` loop.
+
+## Script execution: ##
+
+Where you place your script in an HTML file makes a difference as to the speed of the execution.
+
+The browser sends a request to a server for the HTML file. The browser receives  the file, and tries to parse it. That's where the performance may vary. A page will probably need the CSS style sheets, images, scripts etc etc. Modern browsers can probably get 6 at the same time in a parallel download.
+
+But when you get to a script to download, the parallel stuff stops until the script is downloaded. This is an issue if you have scripts high in the `<head>` or `<body>` tags.
+
+So a solution could be to relocate the work-intensive scripts. Any non-essential script (to immediate loading of page) should be moved as low as possible. A good place is usually the bottom of the `<body>`.
+
+An alternative is to use the `async` attribute in your `<script>` tag. This stops the script blocking the load. It allows the rest of the parallel stuff to carry on.
+
+## Short performance tips: ##
+
+Inheritance can help memory efficiency. Don't load individual objects with code that could be held and sourced elsewhere, i.e. a prototype.
+
+```
+function signalFire( ID, startingLogs ) {
+    this.fireID = ID;
+    this.logsLeft = startingLogs;
+
+    this.addLogs = function (numLogs ) {
+        this.logsLeft += numLogs;
+    }
+
+    this.lightFire = function () {
+        alert("Whoooosh!");
+    }
+
+    this.smokeSignal - function (message) {
+        if(this.logsLeft < this.message.length / 10) {
+	    alert("Not enough fuel to send message");
+	} else {
+	    this.lightFire();
+	    var x = this.message.length;
+	    for(var i = 0; i<x; i++){
+	        alert("(((" + this.message[i] + ")))");
+		if (i % 10 == 0 && i != 0) {
+		    this.logsLeft--;
+		}
+	    }
+	}
+    }
+}
+```
+
+But we don't need to build all of those functions inside each method. Just make a prototype, instead.
+
+```
+SignalFire.prototype = {
+    addLogs: function ( numLogs ) {
+        this.logsLeft += numLogs;
+    }
+    lightFire: function() {
+        alert("Whooosh!");
+    }
+    smokeSignal: function(message) {
+        ...
+    }
+}
+
+function SignalFire( ID, startingLogs ) {
+    this.fireID = ID;
+    this.logsLeft = startingLogs;
+}
+
+var fireOne = new SignalFire(1, 20);
+var fireTwo = new SignalFire(2, 18);
+var fireThree = new SignalFire(3, 24);
+
+```
+
+Calling the methods on the objects, would only call the method from the prototype!
+
+
+
+Adding individual DOM elements isn't always fast. It causes reflow, which is slow.
+
+For example every time you add a bullet point to a list, it would be really slow.
+
+Instead you can add a "document fragment", which adds a heap of HTML at once.
+
+Fragments are like containers that hold DOM elements, even though they aren't DOMs themselves.
+
+```
+var list = document.getElementById("kotwList");
+var kotw = ["1", "2", "3", "4"];
+
+var fragment = document.createDocumentFragment();
+for (var i = 0, x = kotw.length; i < x, i++) {
+    var element = document.createElement("li");
+    element.appendChild( document.createTextNode (kotw[i] );
+    fragment.appendChild(element);
+}
+
+list.appendChild(fragment);
+```
+
+The fragment is like a staging area for the DOM appending.
+
+
+
+Declare variables as few times as possible. Every time you do it adds a look up for the JavaScript parser that can be avoided with comman extensions.
+
+```
+var varOne = 1, varTwo = 2, varThree = 3;
+
+```
+
+So also avoid declaring in loops.
+
+The above fragment could be declared outside the loop.
+
+```
+var list = document.getElementById("kotwList"),
+    kotw = ["1", "2", "3", "4"],
+    fragment = document.createDocumentFragment(),
+    element;
+
+for (var i = 0, x = kotw.length; i < x, i++) {
+    element = document.createElement("li");
+    element.appendChild( document.createTextNode (kotw[i] );
+    fragment.appendChild(element);
+}
+
+list.appendChild(fragment);
+```
+
+An argument against that is most people like the declaration of variables to be as near to where they are being used as possible, for readability. It's a trade off between legibility and processer burden.
+
+
+
+Efficient choice for string concatenation:
+
+```
+var knight = "gqpg3q";
+var action = "egwqgtq";
+var weapon = "ewwgqt";
+
+var turn = "";
+
+turn += knight;
+turn += action;
+turn += weapon;
+
+```
+
+`+=` has been optimised in most browsers, and is ideal for a small number of string concatenations.
+
+But if you have an array of many many strings or something.
+
+```
+var stringArray = ["a", "b", "c", "d", "e", "f", ..., "3qt3qtq"]
+
+var page = "";
+for var i = 0, x = stringArray.length; i < x; i++){
+    page = stringArray.join("stringBetween");
+}
+```
+
+The `join("")` is a native method, and is optimised for concatenating an array of strings into a single string.
+
+## Measuring performance: ##
+
+Using `console.time()`
+
+```
+console.time("Specific string");
+...
+console.timeEnd("Specific string");
+```
+
+Output: `Specific string: 0.040ms`
+
+The string must be the same in the `console.time()` and `console.timeEnd()` calls.
+
+Multiple timers can run simultaneously. They are labelled by the string.
+
+Remember setting up the timers also takes time. Probably about 0.1s
+
+And average multiple tests.
+
+
+Alternative you can create a speed class.
+
+This can average the time it takes for code to run. This needs numerical time date, using the JavaScript Date object.
+
+```
+var rightNow = new Date();
+console.log(rightNow); // Logs out a nice string with stuff
+console.log(+rightNow); // Logs out the time in milliseconds since 1970.
+console.log(new Number (rightNow)); // Equivalent to the `+` operator.
+
+var rightNow = +new Date();
+var endTime = +new Date();
+var elapsedTime - endTime - rightNow;
+```
+
+```
+function SpeedTest(testImplement, testParams, repetitions){
+    this.testImplements = testImplement;
+    this.testParams = testParams;
+    this.repetitions = repetitions || 10000; //optional
+    this.average = 0;
+}
+
+SpeedTest.prototype = {
+    startTest: function(){
+        var beginTime, endTime, sumTimes = 0;
+	for var i = 0; x = this.repetitions; i < x; i++){
+	    beginTime = +new Date();
+	    this.testImplement( this.testParams );
+	    endTime = +new Date();
+	    sumTimes += endTime - beginTime;
+	}
+	this.average = sumTimes / this.repetitions;
+	return console.log("Average execution across " + this.repetitions + ": " + this.average);
+    }
+}
+
+var noBP = function ( listOfParams ) {
+ ...
+};
+
+var noBPtest = new SpeedTest(noBP, paramsForTests);
+noBPtest.startTest();
+```
+
+## Careful comparisons: ##
+
+Triple equals `===` compares type and contents.
+
+Double equals uses "type coercion" to try and help out.
+
+A string full only of escape characters evaluates to false.
+
+Anothe useful thing is to find the class of an object - because we only want to perform tasks on something that is of a specific class.
+
+`if ( objectName instanceof ClassName) { ... }`
+
+An object is an "instance" of all the prototypes from which it inherits properties.
+
+## Exception handling: ##
+
+It is a run-time error. This needs to be distinguished from a syntax error.
+
+For example a piece of okay code, but using an undeclared variable.
+
+You can use a `try{}` block:
+
+```
+try {
+    alert(alarm);
+} catch (error) {
+    alert("Error: " + error);
+}
+```
+
+A try block is like a testing zone for code. If it is okay, it will all happen as expected.
+
+This allows a better way to either notify the user of an error, or to skirt around them.
+
+There are different types of errors, and so you can use that type to be clever:
+
+```
+try {
+    var newHallOfFame = ["str1", "str2"];
+    list.concat(newHallOfFame);
+} catch (error) {
+    if(error instanceof ReferenceError) {
+        do one thing
+    } else if (error instanceof TypeError) {
+        do something else
+    }
+}
+```
+
+ReferenceError = doesn't exist
+TypeError = if the list isn't the right type.
+
+This helps us to know how to best debug.
+
+But what if the list is just a string?
+
+You can use the `throw` keyword to make your own error.
+
+```
+try {
+    var newHallOfFame = ["str1", "str2"];
+    if (list === undefined) {
+        throw new ReferenceError();
+    }
+    if ((list instanceof Array) === false){
+        throw new TypeError();
+    }
+    list.concat(newHallOfFame);
+} catch (error) {
+    if(error instanceof ReferenceError) {
+        do one thing
+    } else if (error instanceof TypeError) {
+        do something else
+    }
+}
+```
+
+As soon as a `try` block gets to a `throw` instance, it will immediately go to the correct `catch` block and not do anything else.
+
+The `try` `catch` block has a `finally` block. This will always execute even if there are errors.
+
+```
+try {
+    ...
+    finally {
+        ...
+    }
+}
+```
+
+What if we want more than one option? You can nest `try` blocks.
+
+```
+try {
+   ...
+} catch (error) {
+    try {
+        ...
+    }
+    ...
+    if () {
+       throw new Error("")
+    } catch (error2) {
+        ...
+    }
+    finally {
+        ...
+    }
+}
+```
+
+## Stuff that sometimes sucks: ##
+
+JavaScript `with` is often unreliable and expensive.
+
+```
+var drawbridge = {
+    soldiers: 8,
+    capacity: 20,
+    open: function() {
+        alert("rrrrrrrrrBANG!");
+    }
+};
+
+with(drawbridge) {
+    open();
+}
+```
+
+The `with` block takes the entire encapsulated environment of the parameter object amd uses it to build a new local within it's brackets.
+
+So you can call methods things to do with the parameter inside the `with`. It acts as though the parameter is local to the `with` block.
+
+But if you try and use the `with` to make new properties, it doesn't behave as expected:
+
+```
+with(drawbridge) {
+    close = function {
+        alert("yunyunyunyunyunyunCLACK!");
+    };
+}
+```
+
+The method then is considered to be a new global thing, so the `close` function just becomes it's own thing, unassociated with `drawbridge`.
+
+What `with` is trying to do is stop the need to have nested scenario.
+
+Think of a `castle` object, which has a `keep` object, which has a `drawbridge` object etc etc. Accessing the drawbridge in the global scope would need something like: `castle.keep.drawbridge.whatever` which is rubbish.
+
+Some people would use a `with` and make the parameter `castle.keep.drawbridge`. But `with` make it unclear what you are actually altering.
+
+Instead, use variables to cache objects:
+
+```
+var o = castle.keep.drawbridge;
+...
+call stuff as o.blah
+...
+```
+
+## eval(): ##
+
+It affect legibility and ability to debug.
+
+```
+function assignRegimentMotto(number, motto) {
+    eval("regiment" + number + ".motto = '" + motto + "'");
+}
+```
+
+Problems include what happens if there is an apostrophe in the code. The compiler will misinterpret that as the string completing.
+
+To avoid the cost of processor time of using it (if you must) minimise the operations within that statement:
+
+```
+function assignRegimentMotto(number, motto) {
+    eval("regiment" + number).motto = motto;
+}
+```
+
+Use arrays and data structures:
+
+```
+var regiments = [**a bunch of ordered regiment objects**];
+function assignRegimentMotto(number, motto) {
+    regiments[number].motto = motto;
+}
+```
+
+By ordering the regiment objects when you build the list of them, the `number` parameter can be used really easily.
+
+But what if I have JSON data in a big string???
+
+What if the string is poor?
+
+Use `JSON.parse()`
+
+## Leaving off brackets: ##
+
+Sometimes you can, but just DON'T
+
+For example, you could:
+
+```
+if(isKing)
+    weapon = "Excalibur";
+else
+    weapon = "Longsword";
+
+```
+
+This is only possible if there is only one statement to execute.
+
+But what if you need to add new code?
+
+If you have:
+
+```
+if(isKing)
+    weapon = "Excalibur";
+    alert("blah");
+    var bob = 2;
+else
+    weapon = "Longsword";
+    alert("blah");
+    var bob = 3;
+```
+
+Only the statement immediately after the `if` statement is in the `if` block. Even when indented, the `alert` and `var = bob...` are just global. So the `else` doesn't think it's attached to an `if`.
+
+It is seen as:
+
+```
+if(isKing)
+    weapon = "Excalibur";
+alert("blah");
+var bob = 2;
+else
+    weapon = "Longsword";
+alert("blah");
+var bob = 3;
+```
+
+The worst thing is it may still parse, but not behave as expected.
+
+## Number nonsense: ##
+
+JavaScript uses floating point values to handle all the decimal based operations. Rounding error.
+
+`console.log(0.1 + 0.2);` gives 0.300000000004 (ish)
+
+It's a trade-off between accuracy and processor times.
+
+The `toFixed()` method allows a fixed number of decimal places.
+
+```
+var num = 0.1 + 0.2;
+console.log(num.toFixed(1));
+```
+gives "0.3".
+
+It rounds to last indicated position, and returns a STRING!
+
+`parseFloat()` turns strings into decimal numbers. so:
+
+
+```
+function tax (price, percent){
+    return parseFloat((price * percent / 100).toFixed(2));
+}
+```
+
+There is also a `parseInt()`, too. String to integer. It does not round! It just trims the string.
+
+`parseInt()` can also accept octal, hexadecimal, decimal values. So "021" may come out as 17.
+
+To fix this, explicitly give a "radix" value, which tells you which base you want to use:
+
+`parseInt("021", 10);` (decimal) the second number can be 2 - 36.
+
+## Testing for number presence before operations: ##
+
+`typeof NaN;` is "number"
+`console.log(NaN === NaN); "false"
+`isNaN("42"); "false" (not a number, because it is a string).
+
+To circumvent problems, use `typeOf` and `isNan`
+
+```
+function actualNumberCheck (data) {
+    return (typeof data === "number" && !isNaN(data) );
+}
+```
+
+So it has to have a number type, and also be `isNaN()`.
+
+Use parse methods for form data.
+
+Numerical data shows up as a string. parse data before type check.
+
+So check you have a valid zip code:
+
+```
+function checkValidZip ( ) {
+    var entry = document.getElementById("zip").value;
+    var userZip = parseInt(entry)
+    try{
+        if(actualNumberCheck(userZip)) {
+	    // Is a number
+	    if(userZip.toFixed(0).length === 5) {
+	        // Is 5 digits
+		return true;
+	    } else {
+	        // Not 5 digits
+	        throw new Error("Nope!")
+	    }
+	} else {
+	    // Not a number
+	    throw new Error("Nope!");
+	}
+	catch(e) {
+	    if(e.message === "Nope!") {
+	        alert("Please enter a valid zip!");
+		return false;
+	    }
+	}
+    }
+}
+```
+
+## Namespacing basics: ##
+
+You can get conflicting global elements, leading to overwriting of data.
+
+Private and public stuff.
+
+So say you have two scripts, one after the other.
+
+in the first, you set `list = [...]`
+If you then have a new variable in the next script `list = [...]` you'll overwrite the first list, due to hoisting. Both are globals. It may not be a big issue, if the first list is all done with. But it can be problematic.
+
+If the first script just makes a global function, that is called later, it will store the list. The display only happens when a button click happens. But by then the second script has been run, and so the list has been changed.
+
+To avoid this, you can use a "namespace". This limits global impact.
+
+First you create a namespace (by convention called by capitals) as a single global object, called the "wrapper" for the space:
+
+```
+var HOFMASTER = {
+    list: [...],
+    hof: ...,
+    fragment: ...,
+    element: ...,
+    displayHOF: function() {
+        ...
+    }
+};
+```
+
+All the variables that were in the first script become properties of the namespace object.
+
+Then when calling the behaviour later, it must have `HOFMASTER.` at the front.
+
+Namespaces reduce the "global footprint" and avoid all the possible overwriting.
+
+Namespaces don't know about each other, unless you name one in another.
+
+You can also nest namespaces.```
+var HOFMASTER = {
+    list: [...],
+    hof: ...,
+    fragment: ...,
+    element: ...,
+    displayHOF: function() {
+        ...
+    },
+    BIOGRAPHIES: {
+        list: [...],
+	unfoldBio: function ( member ) {
+	    ...;
+	},
+	...
+    }
+};
+```
+
+You could then do something crazy like: `HOFMASTER.BIOGRAPHIES.unfoldBio(HOFMASTER.list[1]);`
+
+## Anonymous closures: ##
+
+The problem with a namespace is you have to rely on no-one else ever using that name you've used for it.
+
+What if we want to not allow some properties to be accessed by other people, for example sensitive data.
+
+So for an example with an `ARMORY` namespace. You could consider the lists of weapons and armour to be private (your data), request methods (for weapon or armour) should be public, but methods like remove or replace weapon or armour should be private, because the mess with the data. By making these things private, they can only be done within the module.
+
+So public methods can trigger private methods. So the requests for a weapon can trigger the private things to alter the data.
+
+Closure can allow the privatisation of properties.
+
+```
+var ARMORY = (function() {
+    
+    var weaponList = [...];
+    var armorList =  [...];
+
+    var removeWeapon = function (...) {...};
+    var replaceWeapon = function (...) {...};
+    var removeArmor = function (...) {...};
+    var replaceArmor = function (...) {...};
+
+    return {
+        makeWeaponRequest: function (...) {...},
+        makeArmorRequest: function (...) {...}
+    };
+
+})();
+```
+
+The last parentheses make it immediately executed.
+By making the methods into variables, they are only local to the function, and therefore private. Private stuff should be at the top.
+
+Then the public stuff is put in its own object, which is returned from the function.
+
+## Global imports: ##
+
+```
+var wartime = True;
+var ARMORY = (function() {
+    
+    var weaponList = [...];
+    var armorList =  [...];
+
+    var removeWeapon = function (...) {...};
+    var replaceWeapon = function (...) {...};
+    var removeArmor = function (...) {...};
+    var replaceArmor = function (...) {...};
+
+    return {
+        makeWeaponRequest: function (...) {
+	    if(wartime) // let civilians have weapons    
+	},
+        makeArmorRequest: function (...) {...}
+    };
+
+})();
+```
+
+When trying to find the global variable `wartime` the compiler first checks the namespace, working up the hierarchy. If this namespace was nested, then next one would be tested etc etc.
+
+Globals are problematic, because the entire scope of the namespace must be checked, this could be slow. This will happen every time the variable is referenced.
+
+Also if you have a lengthy namespace, it can be unclear what the scope of the global variable is. Is it global, or did you just miss the local declaration somewhere?
+
+For clearer, faster globals, use imports.
+
+First way, add a parameter to the wrapper.
+
+```
+var wartime = True;
+var ARMORY = (function( war ) {
+    
+    var weaponList = [...];
+    var armorList =  [...];
+
+    var removeWeapon = function (...) {...};
+    var replaceWeapon = function (...) {...};
+    var removeArmor = function (...) {...};
+    var replaceArmor = function (...) {...};
+
+    return {
+        makeWeaponRequest: function (...) {
+	    if( war ) // let civilians have weapons    
+	},
+        makeArmorRequest: function (...) {...}
+    };
+
+})( wartime );
+```
+
+So in the function declaration use the name that it will be a local parameter. In the immediate calling parentheses you put the name of the global to assign to that local. The imports are all closed up as locals when you are done with the function.
+
+The local value you have made is modifiable, without affecting the global value.
+
+## Augmentation: ##
+
+For when you want to add to existing properties.
+
+Have a separate file with augmenting function. (This is the armoury example still).
+
+```
+ARMORY = (function(oldNS) {
+    var oilBarrels = 1000;
+    var catapults = ["", "", ""];
+    oldNS.assignCatapult = function (regiment) {
+        // do some stuff
+    };
+    return oldNS;
+})( ARMORY );
+```
+
+This time there is no `var` keyword, as it already exists, but the format otherwise is the same as an immediately invoked function.
+
+You import the old namespace as global import.
+
+Note that the new property is being added using the dot notation to the old name space. Not the same way as when making the original name space.
+
+The `oilBarrels` and `catapults` also get returned in the result, but again, they are private.
+
+Private data from original namespace is NOT accessible to the new properties.
+
+The new augmented properties only have access to the new private state that is within the augmentation block, but not the old closure references, list `weaponList`.
+
+So the best practice is to keep the files grouped around the same data usages.
+
+## Wrap up: ##
+
+
+thinkful.com/learn/javascript-best-practices-1
+flippinawesome.org/2013/12/23/45-useful-javascript-tips-tricks-and-best-practices
+jstherightway.org - particularly good at curating stuff from outside of the site.

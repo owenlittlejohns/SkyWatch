@@ -1,0 +1,194 @@
+# Regular Expressions course on Code School: #
+
+A clear and concise way to search through text.
+
+## Strings and regular expressions: ##
+
+For example, looking for:
+
+"407" or "321":
+
+```
+if ((chars[0] == 4 && chars[1] == 0 && chars[2] == 7 ) OR
+  (chars[0] == 3 && chars[1] == 2 && chars[2] == 1))
+```
+
+ETC etc.
+
+But use a regular expression instead.
+
+It consists of a subject string and a match expression (regex).
+
+`if (char.match(/407/))` returns true
+
+If initially it isn't there, it will look through for the string later on. You can use an or operator, to add the `321` option.
+
+`if (char.match(/407|321/))`
+
+The pattern is between the two slashes.
+
+## Different spellings of r:##
+
+`/ar|arr|arrr/`
+
+will get partial matches. This makes the pattern long and inefficient.
+
+Instead, we can use the `+` characters, until it is no longer matched.
+
+`/ar+/`
+
+A partial match: i.e. `james` and `jameson`.
+
+To match to any letters in the alphabet:
+
+`/[a-z]/` character set. ONLY represents 1 character.
+
+Instead of repeating the character set many times:
+
+`/[a-z]+/`
+
+But what about capital letters?
+
+`/[a-z]+/i` the `i` modified means the pattern should be case insensitive. But this may not be the Python case insenstive.
+
+What about whitespace?
+
+`/[a-z\s]/i` - the `\s` is the literal for space.
+
+The order of the characters in the character set are irrelevent.
+
+To include numbers
+
+`/[a-z0-9\s]/i`
+
+Or an alternative is:
+
+`/\w\s/` where `\w` is equivalent to `[a-zA-Z0-9]`
+
+## Validating emails: ##
+
+Example: `sara@example.com`
+
+`/\w@\w/` will match `a@e`
+
+But to match the rest of the character:
+
+`/\w+@\w+/` matches `sara@example`
+
+So:
+
+`/\w+@\w+.\w/` matches `sara@example.com`
+
+The dot is a special character which matches every character except a new line. It is a wild card. So we need a: `\.`
+
+`/\w+@\w+\.\w/` won't match any character other than the `.`
+
+Escape characters: \. \+ \?
+
+The `?` makes the preceding pattern optional.
+
+For the domain names:
+
+`/\w+@\w+\.com|net|org|edu/i` - so only specific domain names will be pulled out.
+
+This pattern is flawed, because the or operator has become the either match `sara@example.com` or `net` or `org` or `edu`
+
+So apply parentheses:
+
+`/\w+@\w+\.(com|net|org|edu)/i`
+
+But also, what about stuff before or after the pattern, we need anchors:
+
+`/^learnbydoing$/` will only match if `learnbydoing` is by itself.
+
+`^` means start at the start of string.
+`$` means stop at the end of the string.
+
+## Confirmative: ##
+
+Extracting keywords from phrases.
+
+First match `/ok/`
+
+But it can't be part of another word.
+
+`\b` boundary character. So `\b\w+\b` will be a word all on it's own.
+
+To also match "Okay" you could do:
+
+`/\bok\b|\bokay\b/`
+
+But that's not efficient. Instead try to find a way to may the `ak` optional.
+
+The `?` operator matches the preceding character either 0 or 1 times.
+
+So you could use it with a group:
+
+`/\bok(ay)?\b/i`
+
+Let's also include `sure`:
+
+`/\bok(ay)?|sure\b/i` - but the first boundary only matches on "okay" and the second only on "sure".
+
+Use parentheses:
+
+`/\b(ok(ay)?|sure)\b/i`
+
+Now also add "yes" where the "es" is optional.
+
+`/\b(ok(ay)?|sure|y(es)?)\b/i`
+
+For a non-numeric string of specified length:
+
+`/[a-z\s,]+/i`
+
+But cleaner to just make sure there aren't numbers:
+
+`/[^\d]/i` in this context the carrot means NOT and `\d` means anything that is a number.
+
+`/^[^\d]$/` - make it the full string.
+
+To avoid confusion with the carrots would be good.
+
+Capital letters of metacharacters match the opposite of their lowercase counterpart.
+
+`/^\D+$/` so `\D` is anything that isn't a number.
+
+Curly braces matches a specific number of times:
+
+`/[a-z]{2}/` matches exactly two characters
+
+`/[a-z]{1,3}/` matches substrings that are 1 - 3 characters long.
+
+So for 20 to 40 characters:
+
+`/^\D{20, 40}$/`
+
+## Multi-line strings: ##
+
+New lines are usually written as `\n`.
+Adding a `g` to the modifier, is a global modifier. So it gets everything, not just the first one.
+
+But using the anchors here, will break, we only want anchors to check to the beginning and end of the line.
+
+If you add an `m` to modifier, it makes it anchor to the line, not to the whole subject.
+
+## Capture groups: ##
+
+Breaking captured string into sub sections.
+
+You can get a really long output, you could use groups.
+
+So instead of `/biglongthing/` you can get:
+
+`/(big(longthis))/` gives match groups `biglongthing` and `longthing`.
+
+But if you use parentheses for a query, such as `(?:street|lane)`, the `?:` makes it a non-capturing group.
+
+## Tools: ##
+
+Soup to Bits for Regular expressions/
+
+regex101.com
+learnpython.com regular expressions. REALLY good.
+Oracle regular expressions pocket book.
