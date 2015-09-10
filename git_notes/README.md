@@ -159,3 +159,5 @@
 * Single repository workflows, collaborative practices.
 * Release tags, release branches.
 * Releases, Wikis, GitHub pages
+* Authentication
+* Hub

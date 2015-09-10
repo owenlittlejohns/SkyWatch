@@ -316,3 +316,175 @@ Create CNAME file in root of repo.
 Configure CNAME with DNS host.
 
 This file only needs to contain the name that we want to point to that page.
+
+## Configuring a New Repository: ##
+
+Going into settings, and options for a new repo.
+
+You can change a name. But existing links will still work.
+You can also change the default branch from master to something like trunk.
+
+The Danger Zone: make private/public, transfer ownership and delete repository.
+
+You can also add collaborators.
+
+With any new project look at the README.md file. It should include details of project and details on how to dowload and configure it locally.
+
+To check what people have been up to on a project you can look at the pulse.
+
+This gives an overview on the recent activity. Including pull request summary, issue stats, and who has been commiting, how many lines of code have been added or deleted.
+
+The pulse is a feel for the relative numbers, not the absolute.
+
+These sort of numbers are in the graphs section.
+
+Contributors graph shows who has been contributing the most - based on commit numbers or additions/deletions.
+
+Commits graph shows busiest days and weeks.
+
+Code frequency graph shows the number of additions and deletions over time.
+
+The punch card shows the number of commits by times of day and days of the week. Each punch is a percentage of the total commits in that time.
+
+ ## GitHub authentication and authorisation: ##
+
+Signed tags are the only authentication option in Git.
+
+Username and emails can be any strings you want.
+
+You could change your global email, and it will look like that email made the commit to the project.
+
+GitHub trusts your team.
+
+Owners on repo can do anything they want
+Collaborators have full read/write access.
+A good practice to limit this stuff is to work in a fork or have a specific place that pull requests are issued to, but only one person can accept the requests to that repo. (operations manager)
+
+Usually a large number of repos and a large number of team members.
+
+Organizations can own code, and use teams with permissions. So add person to a team with the correct permissions.
+
+HTTPS and SSH are both valid ways to access Git. HTTPS might be prefered, just makesure you use a credential helper to stop typing password in every time.
+
+Two factor authentication (2FA) - text message periodically.
+
+Access tokens.
+
+To login with 2FA
+To allow applications access to repo
+
+Treat tokens like passwords
+
+To create - Edit Profile/Applications/Generate new token
+
+Give it a memorable name, and set the scope for it.
+
+
+Four approaches to deployment scripts to use GitHub stuff:
+
+1) SSH agent forwarding - no automation available
+2) OAuth access tokens - same permissions as user
+3) Deploy Keys - access token limited to single repo
+4) Machine keys - create a new GitHub account and manage its permissions
+
+In Edit profile/Security it will show the sessions that have logged in as you.
+
+## Integrating existing services: ##
+
+Basecamp, circle CI
+
+There is a list in https://github.com/github/github-service/tree/master/docs
+
+To add, go into settings, click on webhooks and services option.
+
+Then follow install notes.
+
+You can also remove easily.
+
+Basecamp lists commits in progress page.
+JIRA resolves issues in commit messages
+CircleCI is part of continuous integration, it runs tests every time there is a commit.
+
+Custom webhooks:
+
+These are http calls that notify the application every time an event happens in a repo.
+
+It's a post request that gets sent to a URL you decide.
+
+Payload URL - the URL to be called every time a notification is fired.
+
+Then what should it be notified about?
+
+## Working with the GitHub API: ##
+
+What happens if you want to see all the users commiting to the repo, or all commits.
+
+Using curl:
+
+```
+curl https://api.guthub.com
+curl https://api.github.com/emojis
+curl https://api.github.com/users/peterbell
+curl https://api.github.com/users/peterbell/repos
+
+curl -i -H 'Authorization: token <token here>' https://api.github.com/user
+
+curl -i -H 'Authorization: token <token here>' -d {"name": "test_repo"} https:;api.github.com/user/repos
+```
+
+list all API commands, list emojis, public info on user, user repos, authenticate so get full information on self, create a repo
+`-i` means header information
+
+There is a rate limit and rate limit remaining. How many requests (typically within the hour)
+
+Using the Authentication, you can get more information on yourself.
+
+Adding an issue:
+
+```
+curl -i -H 'Authorization: token <token here> -d {"title": "Fix issue3", "body": "Text for body", "labels": ["critical"]}' https:;api.github.com/repos/user_name/repo_name/issues
+```
+
+## Hub: ##
+
+A command line tool to use GitHub functionality without a browser.
+
+1) Install Hub. 
+`$ git clone https://github.com/github/hub.git`
+`$ cd hub`
+`$ rake install prefix=/usr/local`
+
+2) You can use `hub clone` or `hub fork` or use `$ alias git=hub` and then it will always do hub instead of git, if it can.
+
+But if using bash, you want to allow tab completion.
+
+`hub create` makes a new repo on GutHub
+`hub browse` if you want to see in a browser
+`hub pull-request` make a pull request
+`hub clone repo_name` for our repo,
+`hub clone username/repo_name` for someone else's repo
+`hub fork` works inside that repo
+
+But you would need to fix the remote name.
+
+Pulling from forks in Hub:
+
+`hub remote add username`
+`hub fetch username`
+
+Cherry pick from forks:
+
+`hub cherry-pick username@SHA`
+
+Checkout pull request from a new fork (not set up as a remote)
+
+`hub checkout fullurl/username/repo/pull/1 custom-branch-name`
+
+Merging a pull request from a fork:
+
+`hub merge URLofpullrequest/username/repo/pull/1`
+
+If it is good, then push back up. If it was just for testing and you didn't like it:
+
+`git reset --hard HEAD~1`
+
